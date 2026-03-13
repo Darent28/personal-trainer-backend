@@ -10,6 +10,9 @@ import com.pt.personal_trainer.service.UserService;
 import jakarta.validation.Valid;
 
 import java.util.List;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+
 
 
 @RestController
@@ -28,9 +31,24 @@ public class UserController {
         return userService.postUser(userInput);
     }
 
-    @GetMapping("/user")
-    public List<UserResponseDto> getUser() {
-        return userService.getUser();
+    @GetMapping("/users")
+    public List<UserResponseDto> getUsers() {
+        return userService.getUsers();
+    }
+
+    @GetMapping("/user/{id}")
+    public UserResponseDto getUserById(@PathVariable Long id) {
+        return userService.getUserById(id);
+    }
+
+    @PutMapping("/user/{id}")
+    public UserResponseDto putMethodName(@PathVariable Long id, @RequestBody UserInput userInput) {
+        return userService.updateUsername(id, userInput);
+    }
+    
+    @PutMapping("/delete-user/{id}")
+    public UserResponseDto deleteUser(@PathVariable Long id) {
+        return userService.deleteUser(id);
     }
     
     
