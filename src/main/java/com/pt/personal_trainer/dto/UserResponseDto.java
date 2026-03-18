@@ -7,7 +7,8 @@ import lombok.Builder;
 public record UserResponseDto(
     Long id,
     String username,
-    String email
+    String email,
+    Integer gender_id
 ) {
 
     public static UserResponseDto fromEntity(User user) {
@@ -17,6 +18,7 @@ public record UserResponseDto(
             .id(user.getId())
             .username(user.getUsername())
             .email(user.getEmail())
+            .gender_id(user.getGender_id())
             .build();
 
     }

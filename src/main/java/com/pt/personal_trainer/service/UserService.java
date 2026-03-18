@@ -26,7 +26,7 @@ public class UserService {
     @Transactional
     public UserResponseDto postUser(UserInput userInput) {
 
-        User user = new User(userInput.getUsername(), userInput.getEmail(), passwordEncoder.encode(userInput.getPassword()));
+        User user = new User(userInput.getUsername(), userInput.getEmail(), passwordEncoder.encode(userInput.getPassword()), userInput.getGender_id());
         userRepository.save(user);
 
         return UserResponseDto.fromEntity(user);

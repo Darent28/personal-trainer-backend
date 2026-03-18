@@ -23,4 +23,6 @@ public class UserInput {
 
     @NotNull(message = "Password is required")
     private String password;
+
+    private Integer gender_id;
 }
