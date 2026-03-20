@@ -33,10 +33,14 @@ public class User implements Serializable {
     @Column(name = "status")
     private Integer status;
 
-    public User(String username, String email, String password) {
+    @Column(name = "gender_id")
+    private Integer genderId;
+
+    public User(String username, String email, String password, Integer genderId) {
         this.username = username;
         this.email = email;
         this.password = password;
+        this.genderId = genderId;
         this.status = 1;
     }
 }

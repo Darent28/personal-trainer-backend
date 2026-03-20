@@ -1,4 +1,4 @@
-package com.pt.personal_trainer.dto;
+package com.pt.personal_trainer.domain.dto;
 
 import com.pt.personal_trainer.entity.InfoUser;
 

@@ -7,8 +7,9 @@ import org.springframework.web.server.ResponseStatusException;
 
 import com.pt.personal_trainer.entity.User;
 import com.pt.personal_trainer.repository.UserRepository;
-import com.pt.personal_trainer.domain.UserInput;
-import com.pt.personal_trainer.dto.UserResponseDto;
+import com.pt.personal_trainer.domain.dto.UserResponseDto;
+import com.pt.personal_trainer.domain.input.UserInput;
+
 import jakarta.transaction.Transactional;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -26,7 +27,7 @@ public class UserService {
     @Transactional
     public UserResponseDto postUser(UserInput userInput) {
 
-        User user = new User(userInput.getUsername(), userInput.getEmail(), passwordEncoder.encode(userInput.getPassword()));
+        User user = new User(userInput.getUsername(), userInput.getEmail(), passwordEncoder.encode(userInput.getPassword()), userInput.getGender_id());
         userRepository.save(user);
 
         return UserResponseDto.fromEntity(user);

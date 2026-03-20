@@ -2,8 +2,8 @@ package com.pt.personal_trainer.controller;
 
 import org.springframework.web.bind.annotation.RestController;
 
-import com.pt.personal_trainer.domain.InfoUserInput;
-import com.pt.personal_trainer.dto.InfoUserResponseDto;
+import com.pt.personal_trainer.domain.dto.InfoUserResponseDto;
+import com.pt.personal_trainer.domain.input.InfoUserInput;
 import com.pt.personal_trainer.service.InfoUserService;
 
 import jakarta.validation.Valid;

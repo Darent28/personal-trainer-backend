@@ -1,4 +1,4 @@
-package com.pt.personal_trainer.domain;
+package com.pt.personal_trainer.domain.input;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -23,4 +23,6 @@ public class UserInput {
 
     @NotNull(message = "Password is required")
     private String password;
+
+    private Integer gender_id;
 }
