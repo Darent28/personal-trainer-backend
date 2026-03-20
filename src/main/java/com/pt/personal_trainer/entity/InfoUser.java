@@ -45,9 +45,9 @@ public class InfoUser implements Serializable{
 
     @ManyToOne()
     @JoinColumn(name = "goal", referencedColumnName = "id")
-    private Integer goal;
+    private GoalType goal;
 
-    public InfoUser(Double wheight, Double height, Double fatPorcentage, Integer age, Integer activityLevel, Integer goal) {
+    public InfoUser(Double wheight, Double height, Double fatPorcentage, Integer age, Integer activityLevel, GoalType goal) {
         this.wheight = wheight;
         this.height = height;
         this.fatPorcentage = fatPorcentage;

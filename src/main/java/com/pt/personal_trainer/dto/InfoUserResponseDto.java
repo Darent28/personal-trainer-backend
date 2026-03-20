@@ -25,7 +25,7 @@ public record InfoUserResponseDto(
             .fatPorcentage(infoUser.getFatPorcentage())
             .age(infoUser.getAge())
             .activityLevel(infoUser.getActivityLevel())
-            .goal(infoUser.getGoal())
+            .goal(infoUser.getGoal() != null ? infoUser.getGoal().getId() : null)
             .build();
 
     }
