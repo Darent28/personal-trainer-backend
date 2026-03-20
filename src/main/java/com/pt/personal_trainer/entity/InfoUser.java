@@ -40,7 +40,8 @@ public class InfoUser implements Serializable{
     @Column(name = "age")
     private Integer age;
 
-    @Column(name = "activity_level")
+    @ManyToOne()
+    @JoinColumn(name = "activity_level", referencedColumnName = "id")
     private Integer activityLevel;
 
     @ManyToOne()

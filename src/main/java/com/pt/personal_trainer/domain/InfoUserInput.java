@@ -1,7 +1,7 @@
 package com.pt.personal_trainer.domain;
 
 import jakarta.validation.constraints.NotNull;
-
+import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -29,6 +29,7 @@ public class InfoUserInput {
     @NotNull(message = "Activity level is required")
     private Integer activityLevel;
 
+    @Pattern(regexp = "1|2|3", message = "Goal must be 1, 2, or 3")
     @NotNull(message = "Goal is required")
     private Integer goal;
 

@@ -18,4 +18,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query("UPDATE User u SET u.status = 0 WHERE u.id = :id")
     void updateStatusById(Long id);
 
+    @Query("SELECT u.gender_id FROM User u WHERE u.id = :id")
+    Integer findGenderIdById(Long id);
+
 }
