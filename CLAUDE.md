@@ -30,7 +30,7 @@ SPRING_DATASOURCE_USERNAME=<username>
 SPRING_DATASOURCE_PASSWORD=<password>
 ```
 
-The datasource URL points to a Neon Cloud PostgreSQL instance (configured in `src/main/resources/application.properties`). A commented-out local PostgreSQL URL (port 5433) is also present for local development.
+The datasource URL points to a Neon Cloud PostgreSQL instance (configured in `src/main/resources/application.properties`). A commented-out local PostgreSQL URL (port 5433) is also present for local development. Server runs on port 8080.
 
 ## Architecture
 
@@ -44,8 +44,9 @@ All source code is under `src/main/java/com/pt/personal_trainer/`.
 - `controller/` — REST controllers (`UserController`, `InfoController`)
 - `service/` — Business logic (`UserService`, `InfoUserService`)
 - `repository/` — Spring Data JPA repositories
-- `entity/` — JPA entities (`User`, `InfoUser`, `GoalType`)
-- `dto/` and `domain/` — Input models (with JSR-380 validation) and response DTOs (Java records with static `fromEntity()` factory methods)
+- `entity/` — JPA entities (`User`, `InfoUser`, `GoalType`, `LevelActivityType`)
+- `domain/input/` — Request DTOs with JSR-380 validation constraints
+- `domain/dto/` — Response DTOs as immutable Java records with static `fromEntity()` factory methods
 - `exception/` — Custom exception hierarchy (`NotFoundException`, `ProcessServiceException`, `ServerErrorException`) and a global `@RestControllerAdvice` handler that returns `ProblemDetail` responses
 - `config/` — `PasswordEncoderConfig` (BCrypt bean)
 
@@ -54,11 +55,28 @@ All source code is under `src/main/java/com/pt/personal_trainer/`.
 - `@Transactional` on write operations in service layer
 - Soft delete: `updateStatusById()` in `UserRepository` sets a status flag rather than deleting rows
 - Password encoding via BCrypt at the service layer before persistence
+- Custom `@Query` annotations in repositories for non-destructive update operations
+
+## Core Feature: Macro Calculation
+
+`InfoUserService` implements the **Harris-Benedict BMR formula** to calculate daily calorie and macronutrient targets. It uses `LevelActivityType.activityFactor` (fetched by ID) to scale BMR based on the user's activity level. The result drives the diet plan stored in `InfoUser`.
+
+## API Endpoints
+
+**User management** (`/api/user`):
+- `POST /api/user/create-user` — Create user
+- `GET /api/user/get-users` — Get all users
+- `GET /api/user/get-user/{id}` — Get user by ID
+- `PUT /api/user/user/{id}` — Update user
+- `PUT /api/user/delete-user/{id}` — Soft delete (sets status flag)
+
+**User info/diet** (`/api/info`):
+- `POST /api/info/create` — Create user info and calculate macros
 
 ## Known Issues
 
 - `InfoUser.goal` is typed as `Integer` but annotated with `@ManyToOne` — should reference the `GoalType` entity
 - `UserRepository.updateStatusById()` references a `status` column not present on the `User` entity
 - Column name typo in DB: `_wheight` (should be `weight`)
-- `goalTypeRepository` is an empty class, not a proper JPA repository interface
+- `GoalTypeRepository` extends `JpaRepository` but has no custom methods and is not wired into any service
 - `ddl-auto=update` is set — schema changes apply automatically on startup

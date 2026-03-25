@@ -1,82 +1,83 @@
 package com.pt.personal_trainer.service;
 
 import org.springframework.stereotype.Service;
+
 import com.pt.personal_trainer.domain.dto.InfoUserResponseDto;
 import com.pt.personal_trainer.domain.input.InfoUserInput;
-import com.pt.personal_trainer.entity.GoalType;
+import com.pt.personal_trainer.entity.DailyPlans;
 import com.pt.personal_trainer.entity.InfoUser;
 import com.pt.personal_trainer.exception.CustomExceptions.NotFoundException;
+import com.pt.personal_trainer.repository.DailyPlansRepository;
 import com.pt.personal_trainer.repository.InfoUserRepository;
+import com.pt.personal_trainer.repository.LevelActivityTypeRepository;
 import com.pt.personal_trainer.repository.UserRepository;
-import com.pt.personal_trainer.repository.GoalTypeRepository;
 
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 
 @Service
+@RequiredArgsConstructor
 public class InfoUserService {
 
     private final UserRepository userRepository;
     private final InfoUserRepository infoUserRepository;
-    private final GoalTypeRepository goalTypeRepository;
-
-    public InfoUserService(UserRepository userRepository, InfoUserRepository infoUserRepository, GoalTypeRepository goalTypeRepository) {
-        this.userRepository = userRepository;
-        this.infoUserRepository = infoUserRepository;
-        this.goalTypeRepository = goalTypeRepository;
-    }
+    private final LevelActivityTypeRepository levelActivityTypeRepository;
+    private final DailyPlansRepository dailyPlansRepository;
 
     @Transactional
-    public InfoUserResponseDto postInfoUser(InfoUserInput infoUserInput) {
-
-        GoalType goalType = goalTypeRepository.findById(infoUserInput.getGoal())
-                .orElseThrow(() -> new NotFoundException("Goal type not found with id: " + infoUserInput.getGoal()));
-
-        InfoUser infoUser = new InfoUser(infoUserInput.getWheight(), infoUserInput.getHeight(), infoUserInput.getFatPorcentage(), infoUserInput.getAge(), infoUserInput.getActivityLevel(), goalType);
+    public InfoUserResponseDto postInfoUser(InfoUserInput input) {
+        InfoUser infoUser = InfoUser.builder()
+            .wheight(input.getWheight())
+            .height(input.getHeight())
+            .fatPorcentage(input.getFatPorcentage())
+            .age(input.getAge())
+            .activityLevel(input.getActivityLevel())
+            .goal(input.getGoal())
+            .userId(input.getUserId())
+            .build();
         infoUserRepository.save(infoUser);
+
+        dailyPlansRepository.save(calculateMacros(input, infoUser.getId()));
 
         return InfoUserResponseDto.fromEntity(infoUser);
     }
 
-//     private DietInput getMacros(InfoUserInput infoUserInput) {
-//         DietInput dietInput = null;
-//         Integer genderId = userRepository.findGenderIdById(infoUserInput.getUserId());
+    private DailyPlans calculateMacros(InfoUserInput input, Long userInfoId) {
+        int genderIdUser = userRepository.findGenderIdById(input.getUserId())
+            .orElseThrow(() -> new NotFoundException("User not found with id: " + input.getUserId()));
 
-//         switch (infoUserInput.getGoal()) {
-//             case 1:
+        double base = 10 * input.getWheight() + 6.25 * input.getHeight() - 5 * input.getAge();
+        int bmr = switch (genderIdUser) {
+            case 1 -> (int) (base + 5);    // Male
+            case 2 -> (int) (base - 161);  // Female
+            default -> throw new IllegalArgumentException("Invalid gender: " + genderIdUser);
+        };
 
-//                 break;
-//             case 2:
+        double factor = levelActivityTypeRepository.findFactorById(input.getActivityLevel());
+        int tdee = (int) (bmr * factor);
 
-//                 break;
-//             case 3:
+        record GoalConfig(int calorieOffset, double proteinPerKg, double fatPerKg) {}
 
-//                 break;
-//             default:
-//                 throw new IllegalArgumentException("Invalid goal: " + infoUserInput.getGoal());
-//         }
+        // 1 Definicion, 2 Volumen limpio, 3 Recomposicion
+        GoalConfig config = switch (input.getGoal()) {
+            case 1 -> new GoalConfig(-400, 2.2, 0.8);
+            case 2 -> new GoalConfig(+300, 1.6, 0.6);
+            case 3 -> new GoalConfig(   0, 2.0, 0.7);
+            default -> throw new IllegalArgumentException("Invalid goal: " + input.getGoal());
+        };
 
-//         return dietInput;
-//     }
+        int calories = tdee + config.calorieOffset();
+        int proteins = (int) (input.getWheight() * config.proteinPerKg());
+        int fats     = (int) (input.getWheight() * config.fatPerKg());
+        int carbohydrates = (calories - (proteins * 4) - (fats * 9)) / 4;
 
-//     private DietInput macrosCalculator(Integer genderId, InfoUserInput infoUserInput) {
-//         Integer BMR = 0;
-
-//         if (genderId == 1) {
-//             BMR = (int) (10 * infoUserInput.getWheight() + 6.25 * infoUserInput.getHeight() - 5 * infoUserInput.getAge() + 5);
-//         } else if (genderId == 2) {
-//             BMR = (int) (10 * infoUserInput.getWheight() + 6.25 * infoUserInput.getHeight() - 5 * infoUserInput.getAge() - 161);
-//         } else {
-//             throw new IllegalArgumentException("Invalid gender: " + genderId);
-//         }
-
-
-
-//         return DietInput.builder()
-//                 .calories(BMR)
-//                 .carbohydrates(250)
-//                 .proteins(150)
-//                 .fats(70)
-//                 .build();
-//     }
+        return DailyPlans.builder()
+            .totalCalories(calories)
+            .totalProteins(proteins)
+            .totalFats(fats)
+            .totalCarbs(carbohydrates)
+            .userInfoId(userInfoId)
+            .build();
+    }
 
 }

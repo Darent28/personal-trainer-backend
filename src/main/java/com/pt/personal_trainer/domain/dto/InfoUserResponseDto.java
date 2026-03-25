@@ -12,12 +12,12 @@ public record InfoUserResponseDto(
     Double fatPorcentage,
     Integer age,
     Integer activityLevel,
-    Integer goal
+    Integer goal,
+    Long userId
 ) {
-    
-   public static InfoUserResponseDto fromEntity(InfoUser infoUser) {
 
-        
+    public static InfoUserResponseDto fromEntity(InfoUser infoUser) {
+
         return InfoUserResponseDto.builder()
             .id(infoUser.getId())
             .wheight(infoUser.getWheight())
@@ -25,7 +25,8 @@ public record InfoUserResponseDto(
             .fatPorcentage(infoUser.getFatPorcentage())
             .age(infoUser.getAge())
             .activityLevel(infoUser.getActivityLevel())
-            .goal(infoUser.getGoal() != null ? infoUser.getGoal().getId() : null)
+            .goal(infoUser.getGoal())
+            .userId(infoUser.getUserId())
             .build();
 
     }
