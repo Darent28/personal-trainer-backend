@@ -6,8 +6,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.pt.personal_trainer.domain.UserInput;
-import com.pt.personal_trainer.dto.UserResponseDto;
+import com.pt.personal_trainer.domain.dto.UserResponseDto;
+import com.pt.personal_trainer.domain.input.UserInput;
 import com.pt.personal_trainer.service.UserService;
 import jakarta.validation.Valid;
 

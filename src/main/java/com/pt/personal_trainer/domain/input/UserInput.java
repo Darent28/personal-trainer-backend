@@ -1,4 +1,4 @@
-package com.pt.personal_trainer.domain;
+package com.pt.personal_trainer.domain.input;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

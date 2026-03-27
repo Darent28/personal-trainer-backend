@@ -1,4 +1,4 @@
-package com.pt.personal_trainer.domain;
+package com.pt.personal_trainer.domain.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;

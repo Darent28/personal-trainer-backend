@@ -1,4 +1,4 @@
-package com.pt.personal_trainer.dto;
+package com.pt.personal_trainer.domain.dto;
 
 import com.pt.personal_trainer.entity.InfoUser;
 
@@ -12,12 +12,12 @@ public record InfoUserResponseDto(
     Double fatPorcentage,
     Integer age,
     Integer activityLevel,
-    Integer goal
+    Integer goal,
+    Long userId
 ) {
-    
-   public static InfoUserResponseDto fromEntity(InfoUser infoUser) {
 
-        
+    public static InfoUserResponseDto fromEntity(InfoUser infoUser) {
+
         return InfoUserResponseDto.builder()
             .id(infoUser.getId())
             .wheight(infoUser.getWheight())
@@ -26,6 +26,7 @@ public record InfoUserResponseDto(
             .age(infoUser.getAge())
             .activityLevel(infoUser.getActivityLevel())
             .goal(infoUser.getGoal())
+            .userId(infoUser.getUserId())
             .build();
 
     }

@@ -30,14 +30,17 @@ public class User implements Serializable {
     @Column(name = "password")
     private String password;
 
-    @ManyToOne()
-    @JoinColumn(name = "gender_id", referencedColumnName = "id")
-    private Integer gender_id;
+    @Column(name = "status")
+    private Integer status;
 
-    public User(String username, String email, String password, Integer gender_id) {
+    @Column(name = "gender_id")
+    private Integer genderId;
+
+    public User(String username, String email, String password, Integer genderId) {
         this.username = username;
         this.email = email;
         this.password = password;
-        this.gender_id = gender_id;
+        this.genderId = genderId;
+        this.status = 1;
     }
 }

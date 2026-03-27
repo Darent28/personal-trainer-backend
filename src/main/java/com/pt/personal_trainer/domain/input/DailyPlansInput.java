@@ -1,4 +1,4 @@
-package com.pt.personal_trainer.domain;
+package com.pt.personal_trainer.domain.input;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -10,17 +10,20 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class DietInput {
-    
+public class DailyPlansInput {
+
     @NotNull(message = "Calories is required")
-    private Integer calories;
+    private Integer totalCalories;
 
     @NotNull(message = "Carbohydrates is required")
-    private Integer carbohydrates;
+    private Integer totalCarbs;
 
     @NotNull(message = "Proteins is required")
-    private Integer proteins;
-    
+    private Integer totalProteins;
+
     @NotNull(message = "Fats is required")
-    private Integer fats;
+    private Integer totalFats;
+
+    @NotNull(message = "Information User is requires")
+    private Long userInfoId;
 }

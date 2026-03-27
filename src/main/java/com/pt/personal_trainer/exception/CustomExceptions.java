@@ -1,6 +1,6 @@
 package com.pt.personal_trainer.exception;
 
-public class CustomExceptions extends Exception {
+public class CustomExceptions extends RuntimeException {
 
     private CustomExceptions() {
     }

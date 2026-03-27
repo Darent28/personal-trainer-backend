@@ -1,4 +1,4 @@
-package com.pt.personal_trainer.dto;
+package com.pt.personal_trainer.domain.dto;
 
 import com.pt.personal_trainer.entity.User;
 import lombok.Builder;
@@ -8,7 +8,7 @@ public record UserResponseDto(
     Long id,
     String username,
     String email,
-    Integer gender_id
+    Integer genderId
 ) {
 
     public static UserResponseDto fromEntity(User user) {
@@ -18,7 +18,7 @@ public record UserResponseDto(
             .id(user.getId())
             .username(user.getUsername())
             .email(user.getEmail())
-            .gender_id(user.getGender_id())
+            .genderId(user.getGenderId())
             .build();
 
     }
