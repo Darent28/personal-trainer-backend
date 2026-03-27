@@ -18,7 +18,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Builder
 @Data
-@Table(name = "levelActivity_type")
+@Table(name = "level_activity_type")
 public class LevelActivityType implements Serializable {
 
     @Id

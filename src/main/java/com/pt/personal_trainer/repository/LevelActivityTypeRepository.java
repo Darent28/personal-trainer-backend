@@ -8,7 +8,7 @@ import com.pt.personal_trainer.entity.LevelActivityType;
 @Repository
 public interface LevelActivityTypeRepository extends JpaRepository<LevelActivityType, Integer> {
 
-    @Query("SELECT la.activity_name FROM level_activity_type la WHERE la.id = :id")
+    @Query("SELECT la.factor FROM LevelActivityType la WHERE la.id = :id")
     Double findFactorById(Integer id);
 
 }

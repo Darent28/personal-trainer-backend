@@ -26,7 +26,7 @@ public class InfoUser implements Serializable{
     @Column(name = "id")
     private Long id;
     
-    @Column(name = "_wheight")
+    @Column(name = "_weight")
     private Double wheight;
 
     @Column(name = "height")
