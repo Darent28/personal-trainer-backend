@@ -2,6 +2,8 @@ package com.pt.personal_trainer.service;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import com.pt.personal_trainer.entity.User;
@@ -18,6 +20,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @Service
 public class UserService {
 
+    private static final Logger log = LoggerFactory.getLogger(UserService.class);
+
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
@@ -29,11 +33,12 @@ public class UserService {
     @Transactional
     public UserResponseDto postUser(UserInput userInput) {
         try {
-            User user = new User(userInput.getUsername(), userInput.getEmail(), passwordEncoder.encode(userInput.getPassword()), userInput.getGender_id());
+            User user = new User(userInput.getUsername(), userInput.getEmail(), passwordEncoder.encode(userInput.getPassword()), userInput.getGenderId());
             userRepository.save(user);
             return UserResponseDto.fromEntity(user);
         } catch (Exception e) {
-            throw new ServerErrorException("Failed to create user: " + e.getMessage());
+            log.error("Failed to create user", e);
+            throw new ServerErrorException("Failed to create user. Please try again later.");
         }
     }
 
@@ -43,7 +48,8 @@ public class UserService {
                 .map(UserResponseDto::fromEntity)
                 .toList();
         } catch (Exception e) {
-            throw new ServerErrorException("Failed to retrieve users: " + e.getMessage());
+            log.error("Failed to retrieve users", e);
+            throw new ServerErrorException("Failed to retrieve users. Please try again later.");
         }
     }
 
@@ -61,7 +67,8 @@ public class UserService {
             userRepository.updateUsernameById(id, userInput.getUsername());
             return UserResponseDto.fromEntity(userRepository.findById(id).get());
         } catch (Exception e) {
-            throw new ProcessServiceException("Failed to update user: " + e.getMessage(), e);
+            log.error("Failed to update user id={}", id, e);
+            throw new ProcessServiceException("Failed to update user. Please try again later.", e);
         }
     }
 
@@ -73,7 +80,8 @@ public class UserService {
             userRepository.updateStatusById(id);
             return UserResponseDto.fromEntity(userRepository.findById(id).get());
         } catch (Exception e) {
-            throw new ProcessServiceException("Failed to delete user: " + e.getMessage(), e);
+            log.error("Failed to delete user id={}", id, e);
+            throw new ProcessServiceException("Failed to delete user. Please try again later.", e);
         }
     }
 

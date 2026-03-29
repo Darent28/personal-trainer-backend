@@ -24,6 +24,6 @@ public class DailyPlansInput {
     @NotNull(message = "Fats is required")
     private Integer totalFats;
 
-    @NotNull(message = "Information User is requires")
+    @NotNull(message = "User info id is required")
     private Long userInfoId;
 }

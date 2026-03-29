@@ -6,6 +6,7 @@ import lombok.Builder;
 
 @Builder
 public record DailyPlansDto(
+    Long id,
     Integer totalCalories,
     Integer totalProteins,
     Integer totalFats,
@@ -15,6 +16,7 @@ public record DailyPlansDto(
 
     public static DailyPlansDto fromEntity(DailyPlans dailyPlans) {
         return DailyPlansDto.builder()
+            .id(dailyPlans.getId())
             .totalCalories(dailyPlans.getTotalCalories())
             .totalProteins(dailyPlans.getTotalProteins())
             .totalFats(dailyPlans.getTotalFats())

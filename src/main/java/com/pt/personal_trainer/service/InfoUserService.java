@@ -1,15 +1,20 @@
 package com.pt.personal_trainer.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import com.pt.personal_trainer.domain.dto.DailyPlansDto;
 import com.pt.personal_trainer.domain.dto.InfoUserResponseDto;
 import com.pt.personal_trainer.domain.input.InfoUserInput;
 import com.pt.personal_trainer.entity.DailyPlans;
+import com.pt.personal_trainer.entity.GoalMacroConfig;
 import com.pt.personal_trainer.entity.InfoUser;
 import com.pt.personal_trainer.exception.CustomExceptions.NotFoundException;
 import com.pt.personal_trainer.exception.CustomExceptions.ProcessServiceException;
 import com.pt.personal_trainer.exception.CustomExceptions.ServerErrorException;
 import com.pt.personal_trainer.repository.DailyPlansRepository;
+import com.pt.personal_trainer.repository.GoalMacroConfigRepository;
 import com.pt.personal_trainer.repository.InfoUserRepository;
 import com.pt.personal_trainer.repository.LevelActivityTypeRepository;
 import com.pt.personal_trainer.repository.UserRepository;
@@ -21,24 +26,34 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class InfoUserService {
 
+    private static final Logger log = LoggerFactory.getLogger(InfoUserService.class);
+
     private final UserRepository userRepository;
     private final InfoUserRepository infoUserRepository;
     private final LevelActivityTypeRepository levelActivityTypeRepository;
     private final DailyPlansRepository dailyPlansRepository;
+    private final GoalMacroConfigRepository goalMacroConfigRepository;
+
+    public DailyPlansDto getDailyPlanByInfoId(Long infoId) {
+        DailyPlans plan = dailyPlansRepository.findByUserInfoId(infoId)
+            .orElseThrow(() -> new NotFoundException("Daily plan not found for user info id: " + infoId));
+        return DailyPlansDto.fromEntity(plan);
+    }
 
     public InfoUserResponseDto getInfoUserById(Long id) {
         InfoUser infoUser = infoUserRepository.findById(id)
-            .orElseThrow(() -> new NotFoundException("InfoUser not found with id: " + id));
+            .orElseThrow(() -> new NotFoundException("User info not found with id: " + id));
         return InfoUserResponseDto.fromEntity(infoUser);
     }
 
     @Transactional
-    public InfoUserResponseDto postInfoUser(InfoUserInput input) {
+    public InfoUserResponseDto 
+    postInfoUser(InfoUserInput input) {
         try {
             InfoUser infoUser = InfoUser.builder()
-                .wheight(input.getWheight())
+                .weight(input.getWeight())
                 .height(input.getHeight())
-                .fatPorcentage(input.getFatPorcentage())
+                .fatPercentage(input.getFatPercentage())
                 .age(input.getAge())
                 .activityLevel(input.getActivityLevel())
                 .goal(input.getGoal())
@@ -52,46 +67,73 @@ public class InfoUserService {
         } catch (NotFoundException | ProcessServiceException e) {
             throw e;
         } catch (Exception e) {
-            throw new ServerErrorException("Failed to create user info: " + e.getMessage());
+            log.error("Failed to create user info", e);
+            throw new ServerErrorException("Failed to create user info. Please try again later.");
         }
     }
 
+    /**
+     * Calculates daily macro targets intelligently.
+     *
+     * Ranges for calories, protein and fat are loaded from the DB (goal_macro_config table).
+     * The adjustment factor (0.0–1.0) is derived from body-fat percentage (clamped at 30%).
+     * Calories use t² for a progressive curve: conservative at low fat%, ramps up at high fat%.
+     */
     private DailyPlans calculateMacros(InfoUserInput input, Long userInfoId) {
+        // --- BMR (Harris-Benedict) ---
         int genderIdUser = userRepository.findGenderIdById(input.getUserId())
             .orElseThrow(() -> new NotFoundException("User not found with id: " + input.getUserId()));
 
-        double base = 10 * input.getWheight() + 6.25 * input.getHeight() - 5 * input.getAge();
+        double base = 10 * input.getWeight() + 6.25 * input.getHeight() - 5 * input.getAge();
         int bmr = switch (genderIdUser) {
             case 1 -> (int) (base + 5);
             case 2 -> (int) (base - 161);
             default -> throw new ProcessServiceException("Invalid gender id: " + genderIdUser);
         };
 
-        double factor = levelActivityTypeRepository.findFactorById(input.getActivityLevel());
+        // --- TDEE ---
+        Double factor = levelActivityTypeRepository.findFactorById(input.getActivityLevel());
+        if (factor == null) {
+            throw new NotFoundException("Activity level not found with id: " + input.getActivityLevel());
+        }
         int tdee = (int) (bmr * factor);
 
-        record GoalConfig(int calorieOffset, double proteinPerKg, double fatPerKg) {}
+        // --- Goal config from DB ---
+        GoalMacroConfig config = goalMacroConfigRepository.findByGoalTypeId(input.getGoal())
+            .orElseThrow(() -> new NotFoundException("Goal macro config not found for goal id: " + input.getGoal()));
 
-        // 1 Definicion, 2 Volumen limpio, 3 Recomposicion
-        GoalConfig config = switch (input.getGoal()) {
-            case 1 -> new GoalConfig(-400, 2.2, 0.8);
-            case 2 -> new GoalConfig(+300, 1.6, 0.6);
-            case 3 -> new GoalConfig(   0, 2.0, 0.7);
-            default -> throw new ProcessServiceException("Invalid goal: " + input.getGoal());
-        };
+        // t: 0.0 (lean) → 1.0 (high fat%), clamped. Reference: 30% body fat = upper bound.
+        double t = Math.max(0.0, Math.min(1.0, input.getFatPercentage() / 30.0));
 
-        int calories = tdee + config.calorieOffset();
-        int proteins = (int) (input.getWheight() * config.proteinPerKg());
-        int fats     = (int) (input.getWheight() * config.fatPerKg());
-        int carbohydrates = (calories - (proteins * 4) - (fats * 9)) / 4;
+        // Calories use t² for a progressive curve: conservative at low fat%, ramps up quickly at high fat%
+        double calorieFactor = t * t;
+        // Protein and fat scale linearly with fat%
+        double macroFactor   = t;
+
+        int calorieOffset   = interpolate(config.getCalorieOffsetMin(), config.getCalorieOffsetMax(), calorieFactor);
+        double proteinPerKg = interpolate(config.getProteinPerKgMin(), config.getProteinPerKgMax(), macroFactor);
+        double fatPerKg     = interpolate(config.getFatPerKgMin(), config.getFatPerKgMax(), 0.5);
+
+        int calories = tdee + calorieOffset;
+        int proteins = (int) (input.getWeight() * proteinPerKg);
+        int fats     = (int) (input.getWeight() * fatPerKg);
+        int carbs    = (calories - (proteins * 4) - (fats * 9)) / 4;
 
         return DailyPlans.builder()
             .totalCalories(calories)
             .totalProteins(proteins)
             .totalFats(fats)
-            .totalCarbs(carbohydrates)
+            .totalCarbs(carbs)
             .userInfoId(userInfoId)
             .build();
+    }
+
+    private int interpolate(int min, int max, double t) {
+        return (int) Math.round(min + (max - min) * t);
+    }
+
+    private double interpolate(double min, double max, double t) {
+        return min + (max - min) * t;
     }
 
 }
