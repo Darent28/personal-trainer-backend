@@ -4,6 +4,7 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Repository;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
 import com.pt.personal_trainer.entity.User;
@@ -13,10 +14,15 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     @Query("SELECT u FROM User u WHERE u.username = :username")
     User findByUsername(String username);
-    
+
+    @Query("SELECT u FROM User u WHERE u.email = :email")
+    Optional<User> findByEmail(String email);
+
+    @Modifying
     @Query("UPDATE User u SET u.username = :username WHERE u.id = :id")
     void updateUsernameById(Long id, String username);
 
+    @Modifying
     @Query("UPDATE User u SET u.status = 0 WHERE u.id = :id")
     void updateStatusById(Long id);
 
