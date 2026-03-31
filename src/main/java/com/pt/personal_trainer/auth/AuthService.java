@@ -2,14 +2,12 @@ package com.pt.personal_trainer.auth;
 
 import java.time.Instant;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Service;
 
+import com.pt.personal_trainer.config.JwtProperties;
 import com.pt.personal_trainer.domain.dto.AuthResponseDto;
 import com.pt.personal_trainer.domain.dto.UserResponseDto;
 import com.pt.personal_trainer.domain.input.LoginInput;
@@ -25,15 +23,11 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class AuthService {
 
-    private static final Logger log = LoggerFactory.getLogger(AuthService.class);
-
     private final AuthenticationManager authenticationManager;
     private final UserRepository userRepository;
     private final UserService userService;
     private final JwtUtil jwtUtil;
-
-    @Value("${jwt.expiration}")
-    private long expirationMs;
+    private final JwtProperties jwtProperties;
 
     public AuthResponseDto login(LoginInput input) {
         try {
@@ -48,7 +42,7 @@ public class AuthService {
             .orElseThrow(() -> new ProcessServiceException("User not found."));
 
         String token = jwtUtil.generateToken(user.getEmail(), user.getId(), user.getUsername());
-        Instant expiresAt = Instant.now().plusMillis(expirationMs);
+        Instant expiresAt = Instant.now().plusMillis(jwtProperties.getExpiration());
 
         return AuthResponseDto.builder()
             .token(token)
@@ -64,7 +58,7 @@ public class AuthService {
             .orElseThrow(() -> new ProcessServiceException("Registration failed."));
 
         String token = jwtUtil.generateToken(user.getEmail(), user.getId(), user.getUsername());
-        Instant expiresAt = Instant.now().plusMillis(expirationMs);
+        Instant expiresAt = Instant.now().plusMillis(jwtProperties.getExpiration());
 
         return AuthResponseDto.builder()
             .token(token)
