@@ -3,9 +3,9 @@ FROM maven:3.9-eclipse-temurin-21 AS build
 
 WORKDIR /app
 
-# Cache dependencies first
+# Cache dependencies + annotation processor paths (Lombok requires both)
 COPY pom.xml .
-RUN mvn dependency:go-offline -B
+RUN mvn -B dependency:go-offline dependency:resolve-plugins
 
 # Build the jar (skip tests in image build)
 COPY src ./src
