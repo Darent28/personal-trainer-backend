@@ -44,11 +44,7 @@ public class AuthService {
         String token = jwtUtil.generateToken(user.getEmail(), user.getId(), user.getUsername());
         Instant expiresAt = Instant.now().plusMillis(jwtProperties.getExpiration());
 
-        return AuthResponseDto.builder()
-            .token(token)
-            .expiresAt(expiresAt)
-            .user(UserResponseDto.fromEntity(user))
-            .build();
+        return new AuthResponseDto(token, expiresAt, UserResponseDto.fromEntity(user));
     }
 
     public AuthResponseDto register(UserInput input) {
@@ -60,11 +56,7 @@ public class AuthService {
         String token = jwtUtil.generateToken(user.getEmail(), user.getId(), user.getUsername());
         Instant expiresAt = Instant.now().plusMillis(jwtProperties.getExpiration());
 
-        return AuthResponseDto.builder()
-            .token(token)
-            .expiresAt(expiresAt)
-            .user(created)
-            .build();
+        return new AuthResponseDto(token, expiresAt, created);
     }
 
 }

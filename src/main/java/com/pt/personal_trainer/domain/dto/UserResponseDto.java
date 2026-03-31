@@ -1,9 +1,7 @@
 package com.pt.personal_trainer.domain.dto;
 
 import com.pt.personal_trainer.entity.User;
-import lombok.Builder;
 
-@Builder
 public record UserResponseDto(
     Long id,
     String username,
@@ -12,14 +10,11 @@ public record UserResponseDto(
 ) {
 
     public static UserResponseDto fromEntity(User user) {
-
-        
-        return UserResponseDto.builder()
-            .id(user.getId())
-            .username(user.getUsername())
-            .email(user.getEmail())
-            .genderId(user.getGenderId())
-            .build();
-
+        return new UserResponseDto(
+            user.getId(),
+            user.getUsername(),
+            user.getEmail(),
+            user.getGenderId()
+        );
     }
 }
