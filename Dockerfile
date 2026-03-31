@@ -9,7 +9,7 @@ RUN mvn dependency:go-offline -B
 
 # Build the jar (skip tests in image build)
 COPY src ./src
-RUN mvn clean package -DskipTests -B
+RUN touch .env && mvn clean package -DskipTests -B
 
 # ── Runtime stage ─────────────────────────────────────────────────────────────
 FROM eclipse-temurin:21-jre-alpine
