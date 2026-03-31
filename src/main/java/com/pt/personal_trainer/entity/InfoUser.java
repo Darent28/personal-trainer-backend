@@ -19,21 +19,21 @@ import lombok.NoArgsConstructor;
 @Builder
 @Data
 @Table(name = "users_info")
-public class InfoUser implements Serializable{
+public class InfoUser implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
-    
+
     @Column(name = "_weight")
-    private Double wheight;
+    private Double weight;
 
     @Column(name = "height")
     private Double height;
 
-    @Column(name = "fat_porcentage")
-    private Double fatPorcentage;
+    @Column(name = "fat_percentage")
+    private Double fatPercentage;
 
     @Column(name = "age")
     private Integer age;
@@ -47,10 +47,10 @@ public class InfoUser implements Serializable{
     @Column(name = "user_id")
     private Long userId;
 
-    public InfoUser(Double wheight, Double height, Double fatPorcentage, Integer age, Integer activityLevel, Integer goal, Long userId) {
-        this.wheight = wheight;
+    public InfoUser(Double weight, Double height, Double fatPercentage, Integer age, Integer activityLevel, Integer goal, Long userId) {
+        this.weight = weight;
         this.height = height;
-        this.fatPorcentage = fatPorcentage;
+        this.fatPercentage = fatPercentage;
         this.age = age;
         this.activityLevel = activityLevel;
         this.goal = goal;

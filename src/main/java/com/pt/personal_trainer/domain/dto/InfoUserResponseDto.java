@@ -7,9 +7,9 @@ import lombok.Builder;
 @Builder
 public record InfoUserResponseDto(
     Long id,
-    Double wheight,
+    Double weight,
     Double height,
-    Double fatPorcentage,
+    Double fatPercentage,
     Integer age,
     Integer activityLevel,
     Integer goal,
@@ -17,18 +17,16 @@ public record InfoUserResponseDto(
 ) {
 
     public static InfoUserResponseDto fromEntity(InfoUser infoUser) {
-
         return InfoUserResponseDto.builder()
             .id(infoUser.getId())
-            .wheight(infoUser.getWheight())
+            .weight(infoUser.getWeight())
             .height(infoUser.getHeight())
-            .fatPorcentage(infoUser.getFatPorcentage())
+            .fatPercentage(infoUser.getFatPercentage())
             .age(infoUser.getAge())
             .activityLevel(infoUser.getActivityLevel())
             .goal(infoUser.getGoal())
             .userId(infoUser.getUserId())
             .build();
-
     }
 
 }
