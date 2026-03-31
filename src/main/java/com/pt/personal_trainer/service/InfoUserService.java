@@ -4,6 +4,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 import com.pt.personal_trainer.domain.dto.DailyPlansDto;
 import com.pt.personal_trainer.domain.dto.InfoUserResponseDto;
 import com.pt.personal_trainer.domain.input.InfoUserInput;
@@ -38,6 +40,17 @@ public class InfoUserService {
         DailyPlans plan = dailyPlansRepository.findByUserInfoId(infoId)
             .orElseThrow(() -> new NotFoundException("Daily plan not found for user info id: " + infoId));
         return DailyPlansDto.fromEntity(plan);
+    }
+
+    public List<InfoUserResponseDto> getInfoUsersByUserId(Long userId) {
+        try {
+            return infoUserRepository.findByUserId(userId).stream()
+                .map(InfoUserResponseDto::fromEntity)
+                .toList();
+        } catch (Exception e) {
+            log.error("Failed to retrieve info list for userId={}", userId, e);
+            throw new ServerErrorException("Failed to retrieve user info list. Please try again later.");
+        }
     }
 
     public InfoUserResponseDto getInfoUserById(Long id) {

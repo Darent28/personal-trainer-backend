@@ -1,6 +1,8 @@
 package com.pt.personal_trainer.controller;
 
 import org.springframework.http.HttpStatus;
+import java.util.List;
+
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -24,6 +26,11 @@ public class InfoController {
 
     public InfoController(InfoUserService infoUserService) {
         this.infoUserService = infoUserService;
+    }
+
+    @GetMapping("/user/{userId}")
+    public List<InfoUserResponseDto> getInfoUsersByUserId(@PathVariable Long userId) {
+        return infoUserService.getInfoUsersByUserId(userId);
     }
 
     @GetMapping("/{id}")
