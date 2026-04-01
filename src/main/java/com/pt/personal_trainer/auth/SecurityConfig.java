@@ -31,7 +31,7 @@ public class SecurityConfig {
     private final JwtAuthFilter jwtAuthFilter;
     private final UserDetailsServiceImpl userDetailsService;
 
-    @Value("${cors.allowed-origins:https://personal-trainer-hvwx.onrender.com}")
+    @Value("${cors.allowed-origins:https://personal-trainer-hvwx.onrender.com,http://localhost:5173}")
     private String allowedOrigins;
 
     @Bean
