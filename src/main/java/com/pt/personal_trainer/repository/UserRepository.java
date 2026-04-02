@@ -1,5 +1,6 @@
 package com.pt.personal_trainer.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Repository;
@@ -28,5 +29,12 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     @Query("SELECT u.genderId FROM User u WHERE u.id = :id")
     Optional<Integer> findGenderIdById(Long id);
+
+    @Query("SELECT u FROM User u WHERE u.emailVerified = false AND u.status = 1")
+    List<User> findUnverifiedActiveUsers();
+
+    @Modifying
+    @Query("UPDATE User u SET u.emailVerified = true WHERE u.id = :id")
+    void markEmailVerified(Long id);
 
 }

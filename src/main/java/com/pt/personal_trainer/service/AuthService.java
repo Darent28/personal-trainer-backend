@@ -1,4 +1,4 @@
-package com.pt.personal_trainer.auth;
+package com.pt.personal_trainer.service;
 
 import java.time.Instant;
 
@@ -7,6 +7,7 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Service;
 
+import com.pt.personal_trainer.auth.JwtUtil;
 import com.pt.personal_trainer.config.JwtProperties;
 import com.pt.personal_trainer.domain.dto.AuthResponseDto;
 import com.pt.personal_trainer.domain.dto.UserResponseDto;
@@ -15,7 +16,6 @@ import com.pt.personal_trainer.domain.input.UserInput;
 import com.pt.personal_trainer.entity.User;
 import com.pt.personal_trainer.exception.CustomExceptions.ProcessServiceException;
 import com.pt.personal_trainer.repository.UserRepository;
-import com.pt.personal_trainer.service.UserService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -28,6 +28,7 @@ public class AuthService {
     private final UserService userService;
     private final JwtUtil jwtUtil;
     private final JwtProperties jwtProperties;
+    private final EmailConfirmationService emailConfirmationService;
 
     public AuthResponseDto login(LoginInput input) {
         try {
@@ -40,6 +41,10 @@ public class AuthService {
 
         User user = userRepository.findByEmail(input.getEmail())
             .orElseThrow(() -> new ProcessServiceException("User not found."));
+
+        if (!Boolean.TRUE.equals(user.getEmailVerified())) {
+            throw new ProcessServiceException("Please confirm your email before logging in.");
+        }
 
         String token = jwtUtil.generateToken(user.getEmail(), user.getId(), user.getUsername());
         Instant expiresAt = Instant.now().plusMillis(jwtProperties.getExpiration());
@@ -55,6 +60,8 @@ public class AuthService {
 
         String token = jwtUtil.generateToken(user.getEmail(), user.getId(), user.getUsername());
         Instant expiresAt = Instant.now().plusMillis(jwtProperties.getExpiration());
+
+        emailConfirmationService.sendConfirmationEmail(user);
 
         return new AuthResponseDto(token, expiresAt, created);
     }

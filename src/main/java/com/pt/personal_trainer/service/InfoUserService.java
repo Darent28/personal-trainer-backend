@@ -116,7 +116,10 @@ public class InfoUserService {
             .orElseThrow(() -> new NotFoundException("Goal macro config not found for goal id: " + input.getGoal()));
 
         // t: 0.0 (lean) → 1.0 (high fat%), clamped. Reference: 30% body fat = upper bound.
-        double t = Math.max(0.0, Math.min(1.0, input.getFatPercentage() / 30.0));
+        // Default fat%: 15% for males, 25% for females (typical mid-range values)
+        double defaultFat = (genderIdUser == 1) ? 15.0 : 25.0;
+        double fatPercentage = (input.getFatPercentage() != null && input.getFatPercentage() != 0) ? input.getFatPercentage() : defaultFat;
+        double t = Math.max(0.0, Math.min(1.0, fatPercentage / 30.0));
 
         // Calories use t² for a progressive curve: conservative at low fat%, ramps up quickly at high fat%
         double calorieFactor = t * t;

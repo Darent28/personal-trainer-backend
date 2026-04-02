@@ -37,13 +37,27 @@ CREATE TABLE IF NOT EXISTS goal_macro_config (
 
 -- Users
 CREATE TABLE IF NOT EXISTS users (
-    id        BIGSERIAL PRIMARY KEY,
-    username  VARCHAR(255),
-    email     VARCHAR(255),
-    password  VARCHAR(255),
-    status    INTEGER,
-    gender_id INTEGER
+    id              BIGSERIAL PRIMARY KEY,
+    username        VARCHAR(255),
+    email           VARCHAR(255),
+    password        VARCHAR(255),
+    status          INTEGER,
+    gender_id       INTEGER,
+    email_verified  BOOLEAN DEFAULT FALSE
 );
+
+-- Email confirmation tokens
+CREATE TABLE IF NOT EXISTS email_confirmation_tokens (
+    id         BIGSERIAL PRIMARY KEY,
+    token      VARCHAR(255) NOT NULL UNIQUE,
+    user_id    BIGINT NOT NULL REFERENCES users(id),
+    expires_at TIMESTAMP NOT NULL,
+    used       BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMP DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_ect_token ON email_confirmation_tokens(token);
+CREATE INDEX IF NOT EXISTS idx_ect_user_id ON email_confirmation_tokens(user_id);
 
 -- User physical info & diet profile
 CREATE TABLE IF NOT EXISTS users_info (

@@ -6,7 +6,8 @@ public record UserResponseDto(
     Long id,
     String username,
     String email,
-    Integer genderId
+    Integer genderId,
+    Boolean emailVerified
 ) {
 
     public static UserResponseDto fromEntity(User user) {
@@ -14,7 +15,8 @@ public record UserResponseDto(
             user.getId(),
             user.getUsername(),
             user.getEmail(),
-            user.getGenderId()
+            user.getGenderId(),
+            user.getEmailVerified()
         );
     }
 }

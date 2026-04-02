@@ -36,11 +36,16 @@ public class User implements Serializable {
     @Column(name = "gender_id")
     private Integer genderId;
 
+    @Column(name = "email_verified")
+    @Builder.Default
+    private Boolean emailVerified = false;
+
     public User(String username, String email, String password, Integer genderId) {
         this.username = username;
         this.email = email;
         this.password = password;
         this.genderId = genderId;
         this.status = 1;
+        this.emailVerified = false;
     }
 }
