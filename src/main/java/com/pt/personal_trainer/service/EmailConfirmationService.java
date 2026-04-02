@@ -41,25 +41,30 @@ public class EmailConfirmationService {
                 .findValidTokenByUserId(user.getId(), Instant.now());
             if (existing.isPresent()) continue;
 
-            String tokenValue = UUID.randomUUID().toString();
-            EmailConfirmationToken token = EmailConfirmationToken.builder()
-                .token(tokenValue)
-                .user(user)
-                .expiresAt(Instant.now().plus(appProperties.getConfirmationTokenExpiryHours(), ChronoUnit.HOURS))
-                .build();
-            tokenRepository.save(token);
-
-            String confirmUrl = appProperties.getBaseUrl() + "/api/auth/confirm-email?token=" + tokenValue;
-            String html = buildConfirmationHtml(user.getUsername(), confirmUrl);
-
-            try {
-                emailService.sendHtmlEmail(user.getEmail(), "Confirm your email - Personal Trainer", html);
-                sent++;
-            } catch (Exception e) {
-                log.error("Failed to send confirmation email to user id={}", user.getId(), e);
-            }
+            sendConfirmationEmail(user);
+            sent++;
         }
         return sent;
+    }
+
+    @Transactional
+    public void sendConfirmationEmail(User user) {
+        String tokenValue = UUID.randomUUID().toString();
+        EmailConfirmationToken token = EmailConfirmationToken.builder()
+            .token(tokenValue)
+            .user(user)
+            .expiresAt(Instant.now().plus(appProperties.getConfirmationTokenExpiryHours(), ChronoUnit.HOURS))
+            .build();
+        tokenRepository.save(token);
+
+        String confirmUrl = appProperties.getBaseUrl() + "/api/auth/confirm-email?token=" + tokenValue;
+        String html = buildConfirmationHtml(user.getUsername(), confirmUrl);
+
+        try {
+            emailService.sendHtmlEmail(user.getEmail(), "Confirm your email - Personal Trainer", html);
+        } catch (Exception e) {
+            log.error("Failed to send confirmation email to user id={}", user.getId(), e);
+        }
     }
 
     @Transactional
