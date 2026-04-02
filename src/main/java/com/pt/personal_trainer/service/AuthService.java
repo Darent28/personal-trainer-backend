@@ -1,4 +1,4 @@
-package com.pt.personal_trainer.auth;
+package com.pt.personal_trainer.service;
 
 import java.time.Instant;
 
@@ -7,6 +7,7 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Service;
 
+import com.pt.personal_trainer.auth.JwtUtil;
 import com.pt.personal_trainer.config.JwtProperties;
 import com.pt.personal_trainer.domain.dto.AuthResponseDto;
 import com.pt.personal_trainer.domain.dto.UserResponseDto;
@@ -15,8 +16,6 @@ import com.pt.personal_trainer.domain.input.UserInput;
 import com.pt.personal_trainer.entity.User;
 import com.pt.personal_trainer.exception.CustomExceptions.ProcessServiceException;
 import com.pt.personal_trainer.repository.UserRepository;
-import com.pt.personal_trainer.service.EmailConfirmationService;
-import com.pt.personal_trainer.service.UserService;
 
 import lombok.RequiredArgsConstructor;
 

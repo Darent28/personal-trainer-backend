@@ -1,4 +1,4 @@
-package com.pt.personal_trainer.auth;
+package com.pt.personal_trainer.controller;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.pt.personal_trainer.domain.dto.AuthResponseDto;
 import com.pt.personal_trainer.domain.input.LoginInput;
 import com.pt.personal_trainer.domain.input.UserInput;
+import com.pt.personal_trainer.service.AuthService;
 import com.pt.personal_trainer.service.EmailConfirmationService;
 
 import jakarta.validation.Valid;
