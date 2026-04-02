@@ -1,0 +1,103 @@
+package com.pt.personal_trainer.service;
+
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+
+import com.pt.personal_trainer.config.AppProperties;
+import com.pt.personal_trainer.entity.EmailConfirmationToken;
+import com.pt.personal_trainer.entity.User;
+import com.pt.personal_trainer.exception.CustomExceptions.ProcessServiceException;
+import com.pt.personal_trainer.repository.EmailConfirmationTokenRepository;
+import com.pt.personal_trainer.repository.UserRepository;
+
+import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
+
+@Service
+@RequiredArgsConstructor
+public class EmailConfirmationService {
+
+    private static final Logger log = LoggerFactory.getLogger(EmailConfirmationService.class);
+
+    private final UserRepository userRepository;
+    private final EmailConfirmationTokenRepository tokenRepository;
+    private final EmailService emailService;
+    private final AppProperties appProperties;
+
+    @Transactional
+    public int processUnverifiedUsers() {
+        List<User> unverified = userRepository.findUnverifiedActiveUsers();
+        int sent = 0;
+
+        for (User user : unverified) {
+            Optional<EmailConfirmationToken> existing = tokenRepository
+                .findValidTokenByUserId(user.getId(), Instant.now());
+            if (existing.isPresent()) continue;
+
+            String tokenValue = UUID.randomUUID().toString();
+            EmailConfirmationToken token = EmailConfirmationToken.builder()
+                .token(tokenValue)
+                .user(user)
+                .expiresAt(Instant.now().plus(appProperties.getConfirmationTokenExpiryHours(), ChronoUnit.HOURS))
+                .build();
+            tokenRepository.save(token);
+
+            String confirmUrl = appProperties.getBaseUrl() + "/api/auth/confirm-email?token=" + tokenValue;
+            String html = buildConfirmationHtml(user.getUsername(), confirmUrl);
+
+            try {
+                emailService.sendHtmlEmail(user.getEmail(), "Confirm your email - Personal Trainer", html);
+                sent++;
+            } catch (Exception e) {
+                log.error("Failed to send confirmation email to user id={}", user.getId(), e);
+            }
+        }
+        return sent;
+    }
+
+    @Transactional
+    public void confirmEmail(String tokenValue) {
+        EmailConfirmationToken token = tokenRepository.findByToken(tokenValue)
+            .orElseThrow(() -> new ProcessServiceException("Invalid confirmation token."));
+
+        if (token.getUsed()) {
+            throw new ProcessServiceException("This confirmation link has already been used.");
+        }
+        if (token.getExpiresAt().isBefore(Instant.now())) {
+            throw new ProcessServiceException("This confirmation link has expired.");
+        }
+
+        userRepository.markEmailVerified(token.getUser().getId());
+        token.setUsed(true);
+        tokenRepository.save(token);
+    }
+
+    private String buildConfirmationHtml(String username, String confirmUrl) {
+        return """
+            <!DOCTYPE html>
+            <html>
+            <body style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+                <h2 style="color: #333;">Welcome, %s!</h2>
+                <p>Thank you for registering with Personal Trainer. Please confirm your email address by clicking the button below:</p>
+                <div style="text-align: center; margin: 30px 0;">
+                    <a href="%s"
+                       style="background-color: #4CAF50; color: white; padding: 14px 28px;
+                              text-decoration: none; border-radius: 6px; font-size: 16px;
+                              display: inline-block;">
+                        Confirm Email
+                    </a>
+                </div>
+                <p style="color: #666; font-size: 14px;">This link expires in 24 hours. If you did not create this account, you can ignore this email.</p>
+                <p style="color: #666; font-size: 12px;">If the button doesn't work, copy this link into your browser:<br>%s</p>
+            </body>
+            </html>
+            """.formatted(username, confirmUrl, confirmUrl);
+    }
+}

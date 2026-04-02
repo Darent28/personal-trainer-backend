@@ -24,7 +24,6 @@ public class InfoUserInput {
     @Positive(message = "Height must be a positive number")
     private Double height;
 
-    @NotNull(message = "Fat percentage is required")
     @Min(value = 1, message = "Fat percentage must be at least 1")
     @Max(value = 70, message = "Fat percentage must be at most 70")
     private Double fatPercentage;
