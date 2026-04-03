@@ -12,13 +12,14 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
-import lombok.RequiredArgsConstructor;
-
 @Component
-@RequiredArgsConstructor
 public class JwtUtil {
 
     private final JwtProperties jwtProperties;
+
+    public JwtUtil(JwtProperties jwtProperties) {
+        this.jwtProperties = jwtProperties;
+    }
 
     private SecretKey secretKey() {
         return Keys.hmacShaKeyFor(jwtProperties.getSecret().getBytes());

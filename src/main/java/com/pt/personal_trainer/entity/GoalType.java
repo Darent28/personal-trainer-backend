@@ -8,16 +8,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
-@AllArgsConstructor
-@NoArgsConstructor
 @Entity
-@Builder
-@Data
 @Table(name = "goal_type")
 public class GoalType implements Serializable {
 
@@ -31,5 +23,37 @@ public class GoalType implements Serializable {
 
     @Column(name = "goal_description")
     private String goalDescription;
-    
+
+    public GoalType() {
+    }
+
+    public GoalType(Integer id, String goalName, String goalDescription) {
+        this.id = id;
+        this.goalName = goalName;
+        this.goalDescription = goalDescription;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public String getGoalName() {
+        return goalName;
+    }
+
+    public void setGoalName(String goalName) {
+        this.goalName = goalName;
+    }
+
+    public String getGoalDescription() {
+        return goalDescription;
+    }
+
+    public void setGoalDescription(String goalDescription) {
+        this.goalDescription = goalDescription;
+    }
 }

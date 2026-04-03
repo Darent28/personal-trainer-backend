@@ -8,15 +8,16 @@ import org.springframework.stereotype.Service;
 import com.pt.personal_trainer.entity.User;
 import com.pt.personal_trainer.repository.UserRepository;
 
-import lombok.RequiredArgsConstructor;
-
 import java.util.Collections;
 
 @Service
-@RequiredArgsConstructor
 public class UserDetailsServiceImpl implements UserDetailsService {
 
     private final UserRepository userRepository;
+
+    public UserDetailsServiceImpl(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {

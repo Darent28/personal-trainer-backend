@@ -18,10 +18,8 @@ import com.pt.personal_trainer.repository.EmailConfirmationTokenRepository;
 import com.pt.personal_trainer.repository.UserRepository;
 
 import jakarta.transaction.Transactional;
-import lombok.RequiredArgsConstructor;
 
 @Service
-@RequiredArgsConstructor
 public class EmailConfirmationService {
 
     private static final Logger log = LoggerFactory.getLogger(EmailConfirmationService.class);
@@ -30,6 +28,13 @@ public class EmailConfirmationService {
     private final EmailConfirmationTokenRepository tokenRepository;
     private final EmailService emailService;
     private final AppProperties appProperties;
+
+    public EmailConfirmationService(UserRepository userRepository, EmailConfirmationTokenRepository tokenRepository, EmailService emailService, AppProperties appProperties) {
+        this.userRepository = userRepository;
+        this.tokenRepository = tokenRepository;
+        this.emailService = emailService;
+        this.appProperties = appProperties;
+    }
 
     @Transactional
     public int processUnverifiedUsers() {
@@ -50,11 +55,11 @@ public class EmailConfirmationService {
     @Transactional
     public void sendConfirmationEmail(User user) {
         String tokenValue = UUID.randomUUID().toString();
-        EmailConfirmationToken token = EmailConfirmationToken.builder()
-            .token(tokenValue)
-            .user(user)
-            .expiresAt(Instant.now().plus(appProperties.getConfirmationTokenExpiryHours(), ChronoUnit.HOURS))
-            .build();
+        EmailConfirmationToken token = new EmailConfirmationToken(
+            tokenValue,
+            user,
+            Instant.now().plus(appProperties.getConfirmationTokenExpiryHours(), ChronoUnit.HOURS)
+        );
         tokenRepository.save(token);
 
         String confirmUrl = appProperties.getBaseUrl() + "/api/auth/confirm-email?token=" + tokenValue;

@@ -12,15 +12,17 @@ import com.pt.personal_trainer.exception.CustomExceptions.ServerErrorException;
 import com.pt.personal_trainer.repository.GoalTypeRepository;
 import com.pt.personal_trainer.repository.LevelActivityTypeRepository;
 
-import lombok.RequiredArgsConstructor;
-
 @RestController
 @RequestMapping("/api/lookup")
-@RequiredArgsConstructor
 public class LookupController {
 
     private final GoalTypeRepository goalTypeRepository;
     private final LevelActivityTypeRepository levelActivityTypeRepository;
+
+    public LookupController(GoalTypeRepository goalTypeRepository, LevelActivityTypeRepository levelActivityTypeRepository) {
+        this.goalTypeRepository = goalTypeRepository;
+        this.levelActivityTypeRepository = levelActivityTypeRepository;
+    }
 
     @GetMapping("/goal-types")
     public List<GoalTypeDto> getGoalTypes() {

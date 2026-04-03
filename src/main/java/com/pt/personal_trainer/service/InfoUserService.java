@@ -22,10 +22,8 @@ import com.pt.personal_trainer.repository.LevelActivityTypeRepository;
 import com.pt.personal_trainer.repository.UserRepository;
 
 import jakarta.transaction.Transactional;
-import lombok.RequiredArgsConstructor;
 
 @Service
-@RequiredArgsConstructor
 public class InfoUserService {
 
     private static final Logger log = LoggerFactory.getLogger(InfoUserService.class);
@@ -35,6 +33,14 @@ public class InfoUserService {
     private final LevelActivityTypeRepository levelActivityTypeRepository;
     private final DailyPlansRepository dailyPlansRepository;
     private final GoalMacroConfigRepository goalMacroConfigRepository;
+
+    public InfoUserService(UserRepository userRepository, InfoUserRepository infoUserRepository, LevelActivityTypeRepository levelActivityTypeRepository, DailyPlansRepository dailyPlansRepository, GoalMacroConfigRepository goalMacroConfigRepository) {
+        this.userRepository = userRepository;
+        this.infoUserRepository = infoUserRepository;
+        this.levelActivityTypeRepository = levelActivityTypeRepository;
+        this.dailyPlansRepository = dailyPlansRepository;
+        this.goalMacroConfigRepository = goalMacroConfigRepository;
+    }
 
     public DailyPlansDto getDailyPlanByInfoId(Long infoId) {
         DailyPlans plan = dailyPlansRepository.findByUserInfoId(infoId)
@@ -63,15 +69,15 @@ public class InfoUserService {
     public InfoUserResponseDto 
     postInfoUser(InfoUserInput input) {
         try {
-            InfoUser infoUser = InfoUser.builder()
-                .weight(input.getWeight())
-                .height(input.getHeight())
-                .fatPercentage(input.getFatPercentage())
-                .age(input.getAge())
-                .activityLevel(input.getActivityLevel())
-                .goal(input.getGoal())
-                .userId(input.getUserId())
-                .build();
+            InfoUser infoUser = new InfoUser(
+                input.getWeight(),
+                input.getHeight(),
+                input.getFatPercentage(),
+                input.getAge(),
+                input.getActivityLevel(),
+                input.getGoal(),
+                input.getUserId()
+            );
             infoUserRepository.save(infoUser);
 
             dailyPlansRepository.save(calculateMacros(input, infoUser.getId()));
@@ -135,13 +141,7 @@ public class InfoUserService {
         int fats     = (int) (input.getWeight() * fatPerKg);
         int carbs    = (calories - (proteins * 4) - (fats * 9)) / 4;
 
-        return DailyPlans.builder()
-            .totalCalories(calories)
-            .totalProteins(proteins)
-            .totalFats(fats)
-            .totalCarbs(carbs)
-            .userInfoId(userInfoId)
-            .build();
+        return new DailyPlans(calories, proteins, fats, carbs, userInfoId);
     }
 
     private int interpolate(int min, int max, double t) {

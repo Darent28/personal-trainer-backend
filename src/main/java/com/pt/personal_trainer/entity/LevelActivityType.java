@@ -8,16 +8,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
-@AllArgsConstructor
-@NoArgsConstructor
 @Entity
-@Builder
-@Data
 @Table(name = "level_activity_type")
 public class LevelActivityType implements Serializable {
 
@@ -32,4 +24,36 @@ public class LevelActivityType implements Serializable {
     @Column(name = "factor")
     private Double factor;
 
+    public LevelActivityType() {
+    }
+
+    public LevelActivityType(Integer id, String activityName, Double factor) {
+        this.id = id;
+        this.activityName = activityName;
+        this.factor = factor;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public String getActivityName() {
+        return activityName;
+    }
+
+    public void setActivityName(String activityName) {
+        this.activityName = activityName;
+    }
+
+    public Double getFactor() {
+        return factor;
+    }
+
+    public void setFactor(Double factor) {
+        this.factor = factor;
+    }
 }

@@ -21,15 +21,17 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import org.springframework.beans.factory.annotation.Value;
 
-import lombok.RequiredArgsConstructor;
-
 @Configuration
 @EnableWebSecurity
-@RequiredArgsConstructor
 public class SecurityConfig {
 
     private final JwtAuthFilter jwtAuthFilter;
     private final UserDetailsServiceImpl userDetailsService;
+
+    public SecurityConfig(JwtAuthFilter jwtAuthFilter, UserDetailsServiceImpl userDetailsService) {
+        this.jwtAuthFilter = jwtAuthFilter;
+        this.userDetailsService = userDetailsService;
+    }
 
     @Value("${cors.allowed-origins:https://personal-trainer-hvwx.onrender.com,http://localhost:5173}")
     private String allowedOrigins;

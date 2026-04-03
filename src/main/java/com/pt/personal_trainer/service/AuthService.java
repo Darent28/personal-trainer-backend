@@ -17,10 +17,7 @@ import com.pt.personal_trainer.entity.User;
 import com.pt.personal_trainer.exception.CustomExceptions.ProcessServiceException;
 import com.pt.personal_trainer.repository.UserRepository;
 
-import lombok.RequiredArgsConstructor;
-
 @Service
-@RequiredArgsConstructor
 public class AuthService {
 
     private final AuthenticationManager authenticationManager;
@@ -29,6 +26,15 @@ public class AuthService {
     private final JwtUtil jwtUtil;
     private final JwtProperties jwtProperties;
     private final EmailConfirmationService emailConfirmationService;
+
+    public AuthService(AuthenticationManager authenticationManager, UserRepository userRepository, UserService userService, JwtUtil jwtUtil, JwtProperties jwtProperties, EmailConfirmationService emailConfirmationService) {
+        this.authenticationManager = authenticationManager;
+        this.userRepository = userRepository;
+        this.userService = userService;
+        this.jwtUtil = jwtUtil;
+        this.jwtProperties = jwtProperties;
+        this.emailConfirmationService = emailConfirmationService;
+    }
 
     public AuthResponseDto login(LoginInput input) {
         try {
