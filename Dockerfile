@@ -3,17 +3,13 @@ FROM eclipse-temurin:21-jdk AS build
 
 WORKDIR /app
 
-# Copy Maven wrapper and project descriptor
+# Copy everything needed for the build
 COPY .mvn .mvn
 COPY mvnw pom.xml settings.xml ./
-RUN chmod +x mvnw
-
-# Cache dependencies + annotation processor paths (Lombok requires both)
-RUN ./mvnw -B dependency:go-offline dependency:resolve-plugins
-
-# Build the jar (skip tests in image build)
 COPY src ./src
-RUN touch .env && ./mvnw clean package -DskipTests -B
+
+# Build the jar in a single step (skip tests in image build)
+RUN chmod +x mvnw && touch .env && ./mvnw clean package -DskipTests -B
 
 # ── Runtime stage ─────────────────────────────────────────────────────────────
 FROM eclipse-temurin:21-jre-alpine
