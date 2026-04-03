@@ -5,7 +5,7 @@ WORKDIR /app
 
 # Cache dependencies + annotation processor paths (Lombok requires both)
 COPY pom.xml .
-RUN mvn -B dependency:go-offline dependency:resolve-plugins
+RUN mvn -B dependency:go-offline dependency:resolve-plugins && mvn -B dependency:resolve -Dclassifier=sources
 
 # Build the jar (skip tests in image build)
 COPY src ./src
