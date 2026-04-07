@@ -33,7 +33,7 @@ public class SecurityConfig {
         this.userDetailsService = userDetailsService;
     }
 
-    @Value("${cors.allowed-origins:https://personal-trainer-hvwx.onrender.com,http://localhost:5173}")
+    @Value("${cors.allowed-origins:https://personal-trainer-production-0ebf.up.railway.app,http://localhost:5173}")
     private String allowedOrigins;
 
     @Bean
