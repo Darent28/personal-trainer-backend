@@ -1,7 +1,5 @@
 package com.pt.personal_trainer.service;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -22,25 +20,19 @@ import com.pt.personal_trainer.repository.LevelActivityTypeRepository;
 import com.pt.personal_trainer.repository.UserRepository;
 
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
+@RequiredArgsConstructor
+@Slf4j
 public class InfoUserService {
-
-    private static final Logger log = LoggerFactory.getLogger(InfoUserService.class);
 
     private final UserRepository userRepository;
     private final InfoUserRepository infoUserRepository;
     private final LevelActivityTypeRepository levelActivityTypeRepository;
     private final DailyPlansRepository dailyPlansRepository;
     private final GoalMacroConfigRepository goalMacroConfigRepository;
-
-    public InfoUserService(UserRepository userRepository, InfoUserRepository infoUserRepository, LevelActivityTypeRepository levelActivityTypeRepository, DailyPlansRepository dailyPlansRepository, GoalMacroConfigRepository goalMacroConfigRepository) {
-        this.userRepository = userRepository;
-        this.infoUserRepository = infoUserRepository;
-        this.levelActivityTypeRepository = levelActivityTypeRepository;
-        this.dailyPlansRepository = dailyPlansRepository;
-        this.goalMacroConfigRepository = goalMacroConfigRepository;
-    }
 
     public DailyPlansDto getDailyPlanByInfoId(Long infoId) {
         DailyPlans plan = dailyPlansRepository.findByUserInfoId(infoId)
@@ -66,7 +58,7 @@ public class InfoUserService {
     }
 
     @Transactional
-    public InfoUserResponseDto 
+    public InfoUserResponseDto
     postInfoUser(InfoUserInput input) {
         try {
             InfoUser infoUser = new InfoUser(

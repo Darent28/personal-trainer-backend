@@ -2,15 +2,18 @@ package com.pt.personal_trainer.entity;
 
 import java.io.Serializable;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name = "goal_type")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class GoalType implements Serializable {
 
     @Id
@@ -23,37 +26,4 @@ public class GoalType implements Serializable {
 
     @Column(name = "goal_description")
     private String goalDescription;
-
-    public GoalType() {
-    }
-
-    public GoalType(Integer id, String goalName, String goalDescription) {
-        this.id = id;
-        this.goalName = goalName;
-        this.goalDescription = goalDescription;
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public String getGoalName() {
-        return goalName;
-    }
-
-    public void setGoalName(String goalName) {
-        this.goalName = goalName;
-    }
-
-    public String getGoalDescription() {
-        return goalDescription;
-    }
-
-    public void setGoalDescription(String goalDescription) {
-        this.goalDescription = goalDescription;
-    }
 }

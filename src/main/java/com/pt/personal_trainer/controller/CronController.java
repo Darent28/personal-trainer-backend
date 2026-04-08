@@ -12,17 +12,15 @@ import org.springframework.web.bind.annotation.RestController;
 import com.pt.personal_trainer.config.AppProperties;
 import com.pt.personal_trainer.service.EmailConfirmationService;
 
+import lombok.RequiredArgsConstructor;
+
 @RestController
 @RequestMapping("/api/cron")
+@RequiredArgsConstructor
 public class CronController {
 
     private final EmailConfirmationService emailConfirmationService;
     private final AppProperties appProperties;
-
-    public CronController(EmailConfirmationService emailConfirmationService, AppProperties appProperties) {
-        this.emailConfirmationService = emailConfirmationService;
-        this.appProperties = appProperties;
-    }
 
     @PostMapping("/send-confirmation-emails")
     public ResponseEntity<Map<String, Object>> sendConfirmationEmails(

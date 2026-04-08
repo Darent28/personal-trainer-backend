@@ -2,15 +2,18 @@ package com.pt.personal_trainer.entity;
 
 import java.io.Serializable;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name = "level_activity_type")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class LevelActivityType implements Serializable {
 
     @Id
@@ -23,37 +26,4 @@ public class LevelActivityType implements Serializable {
 
     @Column(name = "factor")
     private Double factor;
-
-    public LevelActivityType() {
-    }
-
-    public LevelActivityType(Integer id, String activityName, Double factor) {
-        this.id = id;
-        this.activityName = activityName;
-        this.factor = factor;
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public String getActivityName() {
-        return activityName;
-    }
-
-    public void setActivityName(String activityName) {
-        this.activityName = activityName;
-    }
-
-    public Double getFactor() {
-        return factor;
-    }
-
-    public void setFactor(Double factor) {
-        this.factor = factor;
-    }
 }

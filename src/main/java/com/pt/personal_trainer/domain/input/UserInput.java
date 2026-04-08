@@ -4,7 +4,15 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class UserInput {
 
     @NotNull(message = "Username is required")
@@ -22,46 +30,4 @@ public class UserInput {
 
     @NotNull(message = "Gender is required")
     private Integer genderId;
-
-    public UserInput() {
-    }
-
-    public UserInput(String username, String email, String password, Integer genderId) {
-        this.username = username;
-        this.email = email;
-        this.password = password;
-        this.genderId = genderId;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public Integer getGenderId() {
-        return genderId;
-    }
-
-    public void setGenderId(Integer genderId) {
-        this.genderId = genderId;
-    }
 }

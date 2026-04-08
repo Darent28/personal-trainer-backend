@@ -17,16 +17,14 @@ import com.pt.personal_trainer.domain.input.InfoUserInput;
 import com.pt.personal_trainer.service.InfoUserService;
 
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/api/info")
+@RequiredArgsConstructor
 public class InfoController {
 
     private final InfoUserService infoUserService;
-
-    public InfoController(InfoUserService infoUserService) {
-        this.infoUserService = infoUserService;
-    }
 
     @GetMapping("/user/{userId}")
     public List<InfoUserResponseDto> getInfoUsersByUserId(@PathVariable Long userId) {

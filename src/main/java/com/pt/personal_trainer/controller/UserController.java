@@ -13,18 +13,16 @@ import com.pt.personal_trainer.domain.input.UserInput;
 import com.pt.personal_trainer.service.UserService;
 
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/users")
+@RequiredArgsConstructor
 public class UserController {
 
     private final UserService userService;
-
-    public UserController(UserService userService) {
-        this.userService = userService;
-    }
 
     @GetMapping
     public List<UserResponseDto> getUsers() {

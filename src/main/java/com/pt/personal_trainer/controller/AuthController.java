@@ -18,18 +18,15 @@ import com.pt.personal_trainer.service.AuthService;
 import com.pt.personal_trainer.service.EmailConfirmationService;
 
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/api/auth")
+@RequiredArgsConstructor
 public class AuthController {
 
     private final AuthService authService;
     private final EmailConfirmationService emailConfirmationService;
-
-    public AuthController(AuthService authService, EmailConfirmationService emailConfirmationService) {
-        this.authService = authService;
-        this.emailConfirmationService = emailConfirmationService;
-    }
 
     @PostMapping("/login")
     public AuthResponseDto login(@Valid @RequestBody LoginInput input) {

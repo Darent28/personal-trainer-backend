@@ -6,8 +6,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import com.pt.personal_trainer.config.AppProperties;
@@ -18,23 +16,16 @@ import com.pt.personal_trainer.repository.EmailConfirmationTokenRepository;
 import com.pt.personal_trainer.repository.UserRepository;
 
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 
 @Service
+@RequiredArgsConstructor
 public class EmailConfirmationService {
-
-    private static final Logger log = LoggerFactory.getLogger(EmailConfirmationService.class);
 
     private final UserRepository userRepository;
     private final EmailConfirmationTokenRepository tokenRepository;
     private final EmailService emailService;
     private final AppProperties appProperties;
-
-    public EmailConfirmationService(UserRepository userRepository, EmailConfirmationTokenRepository tokenRepository, EmailService emailService, AppProperties appProperties) {
-        this.userRepository = userRepository;
-        this.tokenRepository = tokenRepository;
-        this.emailService = emailService;
-        this.appProperties = appProperties;
-    }
 
     @Transactional
     public int processUnverifiedUsers() {
@@ -65,11 +56,7 @@ public class EmailConfirmationService {
         String confirmUrl = appProperties.getBaseUrl() + "/api/auth/confirm-email?token=" + tokenValue;
         String html = buildConfirmationHtml(user.getUsername(), confirmUrl);
 
-        try {
-            emailService.sendHtmlEmail(user.getEmail(), "Confirm your email - Personal Trainer", html);
-        } catch (Exception e) {
-            log.error("Failed to send confirmation email to user id={}", user.getId(), e);
-        }
+        emailService.sendHtmlEmail(user.getEmail(), "Confirm your email - Personal Trainer", html);
     }
 
     @Transactional

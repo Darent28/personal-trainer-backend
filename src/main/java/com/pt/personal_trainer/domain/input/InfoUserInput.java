@@ -4,8 +4,15 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class InfoUserInput {
 
     @NotNull(message = "Weight is required")
@@ -33,73 +40,4 @@ public class InfoUserInput {
 
     @NotNull(message = "Goal is required")
     private Integer goal;
-
-    public InfoUserInput() {
-    }
-
-    public InfoUserInput(Double weight, Double height, Double fatPercentage, Integer age, Long userId, Integer activityLevel, Integer goal) {
-        this.weight = weight;
-        this.height = height;
-        this.fatPercentage = fatPercentage;
-        this.age = age;
-        this.userId = userId;
-        this.activityLevel = activityLevel;
-        this.goal = goal;
-    }
-
-    public Double getWeight() {
-        return weight;
-    }
-
-    public void setWeight(Double weight) {
-        this.weight = weight;
-    }
-
-    public Double getHeight() {
-        return height;
-    }
-
-    public void setHeight(Double height) {
-        this.height = height;
-    }
-
-    public Double getFatPercentage() {
-        return fatPercentage;
-    }
-
-    public void setFatPercentage(Double fatPercentage) {
-        this.fatPercentage = fatPercentage;
-    }
-
-    public Integer getAge() {
-        return age;
-    }
-
-    public void setAge(Integer age) {
-        this.age = age;
-    }
-
-    public Long getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Long userId) {
-        this.userId = userId;
-    }
-
-    public Integer getActivityLevel() {
-        return activityLevel;
-    }
-
-    public void setActivityLevel(Integer activityLevel) {
-        this.activityLevel = activityLevel;
-    }
-
-    public Integer getGoal() {
-        return goal;
-    }
-
-    public void setGoal(Integer goal) {
-        this.goal = goal;
-    }
 }

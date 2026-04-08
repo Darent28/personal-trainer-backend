@@ -2,8 +2,6 @@ package com.pt.personal_trainer.service;
 
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import com.pt.personal_trainer.entity.User;
@@ -15,20 +13,17 @@ import com.pt.personal_trainer.exception.CustomExceptions.ProcessServiceExceptio
 import com.pt.personal_trainer.exception.CustomExceptions.ServerErrorException;
 
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Service
+@RequiredArgsConstructor
+@Slf4j
 public class UserService {
-
-    private static final Logger log = LoggerFactory.getLogger(UserService.class);
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
-        this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
-    }
 
     @Transactional
     public UserResponseDto postUser(UserInput userInput) {
