@@ -1,55 +1,43 @@
 package com.pt.personal_trainer.service;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
-import jakarta.mail.internet.MimeMessage;
+import com.resend.Resend;
+import com.resend.services.emails.model.CreateEmailOptions;
+import com.resend.services.emails.model.CreateEmailResponse;
+
 import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
 public class EmailService {
 
-    private final JavaMailSender mailSender;
+    private final Resend resend;
 
-    public EmailService(JavaMailSender mailSender) {
-        this.mailSender = mailSender;
-    }
-
-    @Value("${spring.mail.from}")
+    @Value("${resend.from}")
     private String fromAddress;
+
+    public EmailService(@Value("${resend.api-key}") String apiKey) {
+        this.resend = new Resend(apiKey);
+    }
 
     @Async
     public void sendHtmlEmail(String to, String subject, String htmlBody) {
-        doSend(to, subject, htmlBody);
-    }
-
-    public String sendTestEmail(String to) {
+        log.info("Sending email to {} via Resend", to);
         try {
-            doSend(to, "Test Email - Personal Trainer", "<h1>Test email works!</h1>");
-            return "Email sent successfully to " + to;
-        } catch (Exception e) {
-            return "FAILED: " + e.getMessage();
-        }
-    }
+            CreateEmailOptions options = CreateEmailOptions.builder()
+                .from(fromAddress)
+                .to(to)
+                .subject(subject)
+                .html(htmlBody)
+                .build();
 
-    private void doSend(String to, String subject, String htmlBody) {
-        log.info("Attempting to send email to {} from {}", to, fromAddress);
-        try {
-            MimeMessage message = mailSender.createMimeMessage();
-            MimeMessageHelper helper = new MimeMessageHelper(message, "utf-8");
-            helper.setFrom(fromAddress);
-            helper.setTo(to);
-            helper.setSubject(subject);
-            helper.setText(htmlBody, true);
-            mailSender.send(message);
-            log.info("Email sent successfully to {}", to);
+            CreateEmailResponse response = resend.emails().send(options);
+            log.info("Email sent to {}. Id: {}", to, response.getId());
         } catch (Exception e) {
-            log.error("Failed to send email to {}. Error: {}", to, e.getMessage(), e);
-            throw new RuntimeException("Email send failed: " + e.getMessage(), e);
+            log.error("Failed to send email to {}: {}", to, e.getMessage(), e);
         }
     }
 }

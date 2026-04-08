@@ -79,22 +79,10 @@ public class EmailConfirmationService {
     private String buildConfirmationHtml(String username, String confirmUrl) {
         return """
             <!DOCTYPE html>
-            <html>
-            <body style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
-                <h2 style="color: #333;">Welcome, %s!</h2>
-                <p>Thank you for registering with Personal Trainer. Please confirm your email address by clicking the button below:</p>
-                <div style="text-align: center; margin: 30px 0;">
-                    <a href="%s"
-                       style="background-color: #4CAF50; color: white; padding: 14px 28px;
-                              text-decoration: none; border-radius: 6px; font-size: 16px;
-                              display: inline-block;">
-                        Confirm Email
-                    </a>
-                </div>
-                <p style="color: #666; font-size: 14px;">This link expires in 24 hours. If you did not create this account, you can ignore this email.</p>
-                <p style="color: #666; font-size: 12px;">If the button doesn't work, copy this link into your browser:<br>%s</p>
-            </body>
-            </html>
-            """.formatted(username, confirmUrl, confirmUrl);
+            <html><body style="font-family: Arial, sans-serif; text-align: center; padding: 50px;">
+            <h2 style="color: #4CAF50;">Welcome, %s!</h2>
+            <p>Please confirm your email by <a href="%s">clicking here</a>.</p>
+            </body></html>
+            """.formatted(username, confirmUrl);
     }
 }
