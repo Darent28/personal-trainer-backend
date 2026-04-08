@@ -24,6 +24,7 @@ public class EmailService {
 
     @Async
     public void sendHtmlEmail(String to, String subject, String htmlBody) {
+        log.info("Attempting to send email to {} from {}", to, fromAddress);
         try {
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, "utf-8");
@@ -32,9 +33,9 @@ public class EmailService {
             helper.setSubject(subject);
             helper.setText(htmlBody, true);
             mailSender.send(message);
-            log.info("Email sent to {}", to);
+            log.info("Email sent successfully to {}", to);
         } catch (Exception e) {
-            log.error("Failed to send email to {}", to, e);
+            log.error("Failed to send email to {}. Error: {}", to, e.getMessage(), e);
         }
     }
 }
