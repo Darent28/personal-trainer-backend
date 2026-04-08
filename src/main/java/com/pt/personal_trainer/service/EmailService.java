@@ -24,6 +24,19 @@ public class EmailService {
 
     @Async
     public void sendHtmlEmail(String to, String subject, String htmlBody) {
+        doSend(to, subject, htmlBody);
+    }
+
+    public String sendTestEmail(String to) {
+        try {
+            doSend(to, "Test Email - Personal Trainer", "<h1>Test email works!</h1>");
+            return "Email sent successfully to " + to;
+        } catch (Exception e) {
+            return "FAILED: " + e.getMessage();
+        }
+    }
+
+    private void doSend(String to, String subject, String htmlBody) {
         log.info("Attempting to send email to {} from {}", to, fromAddress);
         try {
             MimeMessage message = mailSender.createMimeMessage();
@@ -36,6 +49,7 @@ public class EmailService {
             log.info("Email sent successfully to {}", to);
         } catch (Exception e) {
             log.error("Failed to send email to {}. Error: {}", to, e.getMessage(), e);
+            throw new RuntimeException("Email send failed: " + e.getMessage(), e);
         }
     }
 }

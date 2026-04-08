@@ -16,6 +16,7 @@ import com.pt.personal_trainer.auth.JwtUtil;
 import com.pt.personal_trainer.auth.UserDetailsServiceImpl;
 import com.pt.personal_trainer.config.AppProperties;
 import com.pt.personal_trainer.service.EmailConfirmationService;
+import com.pt.personal_trainer.service.EmailService;
 
 @WebMvcTest(CronController.class)
 @AutoConfigureMockMvc(addFilters = false)
@@ -26,6 +27,9 @@ class CronControllerTest {
 
     @MockitoBean
     private EmailConfirmationService emailConfirmationService;
+
+    @MockitoBean
+    private EmailService emailService;
 
     @MockitoBean
     private AppProperties appProperties;
