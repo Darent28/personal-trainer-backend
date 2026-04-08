@@ -37,7 +37,6 @@ public class EmailService {
             log.info("Email sent to {}. Id: {}", to, response.getId());
         } catch (ResendException e) {
             log.error("Failed to send email to {}: {}", to, e.getMessage(), e);
-            throw new RuntimeException("Email send failed: " + e.getMessage(), e);
         }
     }
 }

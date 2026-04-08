@@ -43,8 +43,17 @@ public class EmailConfirmationService {
         return sent;
     }
 
-    @Transactional
     public void sendConfirmationEmail(User user) {
+        String tokenValue = createToken(user);
+
+        String confirmUrl = appProperties.getBaseUrl() + "/api/auth/confirm-email?token=" + tokenValue;
+        String html = buildConfirmationHtml(user.getUsername(), confirmUrl);
+
+        emailService.sendHtmlEmail(user.getEmail(), "Confirm your email - Personal Trainer", html);
+    }
+
+    @Transactional
+    protected String createToken(User user) {
         String tokenValue = UUID.randomUUID().toString();
         EmailConfirmationToken token = new EmailConfirmationToken(
             tokenValue,
@@ -52,11 +61,7 @@ public class EmailConfirmationService {
             Instant.now().plus(appProperties.getConfirmationTokenExpiryHours(), ChronoUnit.HOURS)
         );
         tokenRepository.save(token);
-
-        String confirmUrl = appProperties.getBaseUrl() + "/api/auth/confirm-email?token=" + tokenValue;
-        String html = buildConfirmationHtml(user.getUsername(), confirmUrl);
-
-        emailService.sendHtmlEmail(user.getEmail(), "Confirm your email - Personal Trainer", html);
+        return tokenValue;
     }
 
     @Transactional
