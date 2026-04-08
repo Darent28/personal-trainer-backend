@@ -1,10 +1,10 @@
 package com.pt.personal_trainer.service;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import com.resend.Resend;
+import com.resend.core.exception.ResendException;
 import com.resend.services.emails.model.CreateEmailOptions;
 import com.resend.services.emails.model.CreateEmailResponse;
 
@@ -23,9 +23,8 @@ public class EmailService {
         this.resend = new Resend(apiKey);
     }
 
-    @Async
     public void sendHtmlEmail(String to, String subject, String htmlBody) {
-        log.info("Sending email to {} via Resend", to);
+        log.info("Sending email to {} from {} via Resend", to, fromAddress);
         try {
             CreateEmailOptions options = CreateEmailOptions.builder()
                 .from(fromAddress)
@@ -36,8 +35,9 @@ public class EmailService {
 
             CreateEmailResponse response = resend.emails().send(options);
             log.info("Email sent to {}. Id: {}", to, response.getId());
-        } catch (Exception e) {
+        } catch (ResendException e) {
             log.error("Failed to send email to {}: {}", to, e.getMessage(), e);
+            throw new RuntimeException("Email send failed: " + e.getMessage(), e);
         }
     }
 }
