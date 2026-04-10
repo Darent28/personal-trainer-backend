@@ -85,8 +85,18 @@ public class EmailConfirmationService {
             <!DOCTYPE html>
             <html><body style="font-family: Arial, sans-serif; text-align: center; padding: 50px;">
             <h2 style="color: #4CAF50;">Welcome, %s!</h2>
-            <p>Please confirm your email by <a href="%s">clicking here</a>.</p>
+            <p>Please confirm your email to activate your account.</p>
+            <a href="%s"
+               style="display: inline-block; margin-top: 20px; padding: 12px 28px;
+                      background-color: #4CAF50; color: #ffffff; text-decoration: none;
+                      border-radius: 6px; font-weight: bold;">
+                Confirm Email
+            </a>
+            <p style="color: #888; font-size: 12px; margin-top: 30px;">
+                If the button doesn't work, copy and paste this link into your browser:<br>
+                <a href="%s">%s</a>
+            </p>
             </body></html>
-            """.formatted(username, confirmUrl);
+            """.formatted(username, confirmUrl, confirmUrl, confirmUrl);
     }
 }
