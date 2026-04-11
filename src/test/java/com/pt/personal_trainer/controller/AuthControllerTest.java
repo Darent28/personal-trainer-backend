@@ -26,6 +26,7 @@ import com.pt.personal_trainer.domain.input.LoginInput;
 import com.pt.personal_trainer.domain.input.UserInput;
 import com.pt.personal_trainer.service.AuthService;
 import com.pt.personal_trainer.service.EmailConfirmationService;
+import com.pt.personal_trainer.service.PasswordResetService;
 
 @WebMvcTest(AuthController.class)
 @AutoConfigureMockMvc(addFilters = false)
@@ -43,6 +44,9 @@ class AuthControllerTest {
 
     @MockitoBean
     private EmailConfirmationService emailConfirmationService;
+
+    @MockitoBean
+    private PasswordResetService passwordResetService;
 
     @MockitoBean
     private JwtUtil jwtUtil;
@@ -83,16 +87,15 @@ class AuthControllerTest {
     void register_shouldReturn201() throws Exception {
         UserInput input = new UserInput("john", "john@test.com", "password123", 1);
         UserResponseDto userDto = new UserResponseDto(1L, "john", "john@test.com", 1, false);
-        AuthResponseDto response = new AuthResponseDto("jwt-token", Instant.now().plusMillis(86400000), userDto);
 
-        when(authService.register(any(UserInput.class))).thenReturn(response);
+        when(authService.register(any(UserInput.class))).thenReturn(userDto);
 
         mockMvc.perform(post("/api/auth/register")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(input)))
             .andExpect(status().isCreated())
-            .andExpect(jsonPath("$.token").value("jwt-token"))
-            .andExpect(jsonPath("$.user.username").value("john"));
+            .andExpect(jsonPath("$.username").value("john"))
+            .andExpect(jsonPath("$.email").value("john@test.com"));
     }
 
     @Test

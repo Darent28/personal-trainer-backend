@@ -2,8 +2,6 @@ package com.pt.personal_trainer.service;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.stereotype.Service;
@@ -26,22 +24,6 @@ public class EmailConfirmationService {
     private final EmailConfirmationTokenRepository tokenRepository;
     private final EmailService emailService;
     private final AppProperties appProperties;
-
-    @Transactional
-    public int processUnverifiedUsers() {
-        List<User> unverified = userRepository.findUnverifiedActiveUsers();
-        int sent = 0;
-
-        for (User user : unverified) {
-            Optional<EmailConfirmationToken> existing = tokenRepository
-                .findValidTokenByUserId(user.getId(), Instant.now());
-            if (existing.isPresent()) continue;
-
-            sendConfirmationEmail(user);
-            sent++;
-        }
-        return sent;
-    }
 
     @Transactional
     public void sendConfirmationEmail(User user) {

@@ -13,6 +13,6 @@ import lombok.Setter;
 public class AppProperties {
 
     private String baseUrl;
-    private String cronSecret;
     private int confirmationTokenExpiryHours;
+    private int passwordResetTokenExpiryHours;
 }

@@ -8,7 +8,6 @@ import static org.mockito.Mockito.*;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
@@ -38,35 +37,6 @@ class EmailConfirmationServiceTest {
 
     @InjectMocks
     private EmailConfirmationService emailConfirmationService;
-
-    @Test
-    void processUnverifiedUsers_shouldSendEmailsToUsersWithoutValidToken() {
-        User user = new User("john", "john@test.com", "enc", 1);
-        user.setId(1L);
-        when(userRepository.findUnverifiedActiveUsers()).thenReturn(List.of(user));
-        when(tokenRepository.findValidTokenByUserId(eq(1L), any())).thenReturn(Optional.empty());
-        when(appProperties.getConfirmationTokenExpiryHours()).thenReturn(24);
-        when(appProperties.getBaseUrl()).thenReturn("http://localhost:8080");
-
-        int sent = emailConfirmationService.processUnverifiedUsers();
-
-        assertThat(sent).isEqualTo(1);
-        verify(emailService).sendHtmlEmail(eq("john@test.com"), any(), any());
-    }
-
-    @Test
-    void processUnverifiedUsers_shouldSkipUsersWithValidToken() {
-        User user = new User("john", "john@test.com", "enc", 1);
-        user.setId(1L);
-        EmailConfirmationToken existing = new EmailConfirmationToken("token", user, Instant.now().plus(1, ChronoUnit.HOURS));
-        when(userRepository.findUnverifiedActiveUsers()).thenReturn(List.of(user));
-        when(tokenRepository.findValidTokenByUserId(eq(1L), any())).thenReturn(Optional.of(existing));
-
-        int sent = emailConfirmationService.processUnverifiedUsers();
-
-        assertThat(sent).isEqualTo(0);
-        verify(emailService, never()).sendHtmlEmail(any(), any(), any());
-    }
 
     @Test
     void sendConfirmationEmail_shouldCreateTokenAndSendEmail() {

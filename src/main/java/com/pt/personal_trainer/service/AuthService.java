@@ -52,18 +52,15 @@ public class AuthService {
         return new AuthResponseDto(token, expiresAt, UserResponseDto.fromEntity(user));
     }
 
-    public AuthResponseDto register(UserInput input) {
+    public UserResponseDto register(UserInput input) {
         UserResponseDto created = userService.postUser(input);
 
         User user = userRepository.findByEmail(input.getEmail())
             .orElseThrow(() -> new ProcessServiceException("Registration failed."));
 
-        String token = jwtUtil.generateToken(user.getEmail(), user.getId(), user.getUsername());
-        Instant expiresAt = Instant.now().plusMillis(jwtProperties.getExpiration());
-
         emailConfirmationService.sendConfirmationEmail(user);
 
-        return new AuthResponseDto(token, expiresAt, created);
+        return created;
     }
 
 }

@@ -95,13 +95,11 @@ class AuthServiceTest {
 
         when(userService.postUser(input)).thenReturn(dto);
         when(userRepository.findByEmail("john@test.com")).thenReturn(Optional.of(user));
-        when(jwtUtil.generateToken("john@test.com", 1L, "john")).thenReturn("jwt-token");
-        when(jwtProperties.getExpiration()).thenReturn(86400000L);
 
-        AuthResponseDto result = authService.register(input);
+        UserResponseDto result = authService.register(input);
 
-        assertThat(result.token()).isEqualTo("jwt-token");
-        assertThat(result.user().username()).isEqualTo("john");
+        assertThat(result.username()).isEqualTo("john");
+        assertThat(result.email()).isEqualTo("john@test.com");
         verify(emailConfirmationService).sendConfirmationEmail(user);
     }
 }
