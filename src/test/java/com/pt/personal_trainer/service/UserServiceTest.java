@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -35,7 +36,7 @@ class UserServiceTest {
 
     @Test
     void postUser_shouldCreateAndReturnUser() {
-        UserInput input = new UserInput("john", "john@test.com", "password123", 1);
+        UserInput input = new UserInput("john", "john@test.com", "password123", 1, LocalDate.of(2000, 1, 15));
         when(passwordEncoder.encode("password123")).thenReturn("encoded");
         when(userRepository.save(any(User.class))).thenAnswer(invocation -> {
             User u = invocation.getArgument(0);
@@ -53,9 +54,9 @@ class UserServiceTest {
 
     @Test
     void getUsers_shouldReturnAllUsers() {
-        User user1 = new User("john", "john@test.com", "enc", 1);
+        User user1 = new User("john", "john@test.com", "enc", 1, LocalDate.of(2000, 1, 15));
         user1.setId(1L);
-        User user2 = new User("jane", "jane@test.com", "enc", 2);
+        User user2 = new User("jane", "jane@test.com", "enc", 2, LocalDate.of(1995, 6, 20));
         user2.setId(2L);
         when(userRepository.findAll()).thenReturn(List.of(user1, user2));
 
@@ -68,7 +69,7 @@ class UserServiceTest {
 
     @Test
     void getUserById_shouldReturnUser_whenExists() {
-        User user = new User("john", "john@test.com", "enc", 1);
+        User user = new User("john", "john@test.com", "enc", 1, LocalDate.of(2000, 1, 15));
         user.setId(1L);
         when(userRepository.findById(1L)).thenReturn(Optional.of(user));
 
@@ -89,13 +90,13 @@ class UserServiceTest {
 
     @Test
     void updateUsername_shouldUpdateAndReturn() {
-        User user = new User("john", "john@test.com", "enc", 1);
+        User user = new User("john", "john@test.com", "enc", 1, LocalDate.of(2000, 1, 15));
         user.setId(1L);
-        User updated = new User("newname", "john@test.com", "enc", 1);
+        User updated = new User("newname", "john@test.com", "enc", 1, LocalDate.of(2000, 1, 15));
         updated.setId(1L);
         when(userRepository.findById(1L)).thenReturn(Optional.of(user), Optional.of(updated));
 
-        UserInput input = new UserInput("newname", null, null, null);
+        UserInput input = new UserInput("newname", null, null, null, null);
         UserResponseDto result = userService.updateUsername(1L, input);
 
         assertThat(result.username()).isEqualTo("newname");
@@ -104,10 +105,10 @@ class UserServiceTest {
 
     @Test
     void deleteUser_shouldSoftDelete() {
-        User user = new User("john", "john@test.com", "enc", 1);
+        User user = new User("john", "john@test.com", "enc", 1, LocalDate.of(2000, 1, 15));
         user.setId(1L);
         user.setStatus(1);
-        User deleted = new User("john", "john@test.com", "enc", 1);
+        User deleted = new User("john", "john@test.com", "enc", 1, LocalDate.of(2000, 1, 15));
         deleted.setId(1L);
         deleted.setStatus(0);
         when(userRepository.findById(1L)).thenReturn(Optional.of(user), Optional.of(deleted));

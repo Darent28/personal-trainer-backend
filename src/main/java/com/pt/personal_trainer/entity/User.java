@@ -1,6 +1,7 @@
 package com.pt.personal_trainer.entity;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -36,14 +37,18 @@ public class User implements Serializable {
     @Column(name = "gender_id")
     private Integer genderId;
 
+    @Column(name = "birthday")
+    private LocalDate birthday;
+
     @Column(name = "email_verified")
     private Boolean emailVerified = false;
 
-    public User(String username, String email, String password, Integer genderId) {
+    public User(String username, String email, String password, Integer genderId, LocalDate birthday) {
         this.username = username;
         this.email = email;
         this.password = password;
         this.genderId = genderId;
+        this.birthday = birthday;
         this.status = 1;
         this.emailVerified = false;
     }

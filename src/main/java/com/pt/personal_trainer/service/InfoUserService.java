@@ -2,6 +2,8 @@ package com.pt.personal_trainer.service;
 
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.Period;
 import java.util.List;
 
 import com.pt.personal_trainer.domain.dto.DailyPlansDto;
@@ -10,6 +12,7 @@ import com.pt.personal_trainer.domain.input.InfoUserInput;
 import com.pt.personal_trainer.entity.DailyPlans;
 import com.pt.personal_trainer.entity.GoalMacroConfig;
 import com.pt.personal_trainer.entity.InfoUser;
+import com.pt.personal_trainer.entity.User;
 import com.pt.personal_trainer.exception.CustomExceptions.NotFoundException;
 import com.pt.personal_trainer.exception.CustomExceptions.ProcessServiceException;
 import com.pt.personal_trainer.exception.CustomExceptions.ServerErrorException;
@@ -58,21 +61,28 @@ public class InfoUserService {
     }
 
     @Transactional
-    public InfoUserResponseDto
-    postInfoUser(InfoUserInput input) {
+    public InfoUserResponseDto postInfoUser(InfoUserInput input) {
         try {
+            User user = userRepository.findById(input.getUserId())
+                .orElseThrow(() -> new NotFoundException("User not found with id: " + input.getUserId()));
+
+            if (user.getBirthday() == null) {
+                throw new ProcessServiceException("User birthday is not set.");
+            }
+            int age = Period.between(user.getBirthday(), LocalDate.now()).getYears();
+
             InfoUser infoUser = new InfoUser(
                 input.getWeight(),
                 input.getHeight(),
                 input.getFatPercentage(),
-                input.getAge(),
+                age,
                 input.getActivityLevel(),
                 input.getGoal(),
                 input.getUserId()
             );
             infoUserRepository.save(infoUser);
 
-            dailyPlansRepository.save(calculateMacros(input, infoUser.getId()));
+            dailyPlansRepository.save(calculateMacros(input, age, infoUser.getId()));
 
             return InfoUserResponseDto.fromEntity(infoUser);
         } catch (NotFoundException | ProcessServiceException e) {
@@ -90,12 +100,12 @@ public class InfoUserService {
      * The adjustment factor (0.0–1.0) is derived from body-fat percentage (clamped at 30%).
      * Calories use t² for a progressive curve: conservative at low fat%, ramps up at high fat%.
      */
-    private DailyPlans calculateMacros(InfoUserInput input, Long userInfoId) {
+    private DailyPlans calculateMacros(InfoUserInput input, int age, Long userInfoId) {
         // --- BMR (Harris-Benedict) ---
         int genderIdUser = userRepository.findGenderIdById(input.getUserId())
             .orElseThrow(() -> new NotFoundException("User not found with id: " + input.getUserId()));
 
-        double base = 10 * input.getWeight() + 6.25 * input.getHeight() - 5 * input.getAge();
+        double base = 10 * input.getWeight() + 6.25 * input.getHeight() - 5 * age;
         int bmr = switch (genderIdUser) {
             case 1 -> (int) (base + 5);
             case 2 -> (int) (base - 161);

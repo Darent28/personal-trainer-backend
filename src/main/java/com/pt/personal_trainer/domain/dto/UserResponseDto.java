@@ -1,5 +1,7 @@
 package com.pt.personal_trainer.domain.dto;
 
+import java.time.LocalDate;
+
 import com.pt.personal_trainer.entity.User;
 
 public record UserResponseDto(
@@ -7,6 +9,7 @@ public record UserResponseDto(
     String username,
     String email,
     Integer genderId,
+    LocalDate birthday,
     Boolean emailVerified
 ) {
 
@@ -16,6 +19,7 @@ public record UserResponseDto(
             user.getUsername(),
             user.getEmail(),
             user.getGenderId(),
+            user.getBirthday(),
             user.getEmailVerified()
         );
     }

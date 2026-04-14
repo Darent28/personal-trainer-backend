@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,6 +21,7 @@ import com.pt.personal_trainer.domain.input.InfoUserInput;
 import com.pt.personal_trainer.entity.DailyPlans;
 import com.pt.personal_trainer.entity.GoalMacroConfig;
 import com.pt.personal_trainer.entity.InfoUser;
+import com.pt.personal_trainer.entity.User;
 import com.pt.personal_trainer.exception.CustomExceptions.NotFoundException;
 import com.pt.personal_trainer.repository.DailyPlansRepository;
 import com.pt.personal_trainer.repository.GoalMacroConfigRepository;
@@ -98,8 +100,11 @@ class InfoUserServiceTest {
 
     @Test
     void postInfoUser_shouldCalculateMacrosAndSave() {
-        InfoUserInput input = new InfoUserInput(80.0, 180.0, 15.0, 25, 1L, 3, 1);
+        InfoUserInput input = new InfoUserInput(80.0, 180.0, 15.0, 1L, 3, 1);
 
+        User user = new User("john", "john@test.com", "enc", 1, LocalDate.of(2000, 1, 15));
+        user.setId(1L);
+        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
         when(infoUserRepository.save(any(InfoUser.class))).thenAnswer(inv -> {
             InfoUser u = inv.getArgument(0);
             u.setId(10L);
@@ -119,14 +124,9 @@ class InfoUserServiceTest {
 
     @Test
     void postInfoUser_shouldThrow_whenUserNotFound() {
-        InfoUserInput input = new InfoUserInput(80.0, 180.0, 15.0, 25, 99L, 3, 1);
+        InfoUserInput input = new InfoUserInput(80.0, 180.0, 15.0, 99L, 3, 1);
 
-        when(infoUserRepository.save(any(InfoUser.class))).thenAnswer(inv -> {
-            InfoUser u = inv.getArgument(0);
-            u.setId(10L);
-            return u;
-        });
-        when(userRepository.findGenderIdById(99L)).thenReturn(Optional.empty());
+        when(userRepository.findById(99L)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> infoUserService.postInfoUser(input))
             .isInstanceOf(NotFoundException.class);
@@ -134,8 +134,11 @@ class InfoUserServiceTest {
 
     @Test
     void postInfoUser_shouldThrow_whenActivityLevelNotFound() {
-        InfoUserInput input = new InfoUserInput(80.0, 180.0, 15.0, 25, 1L, 99, 1);
+        InfoUserInput input = new InfoUserInput(80.0, 180.0, 15.0, 1L, 99, 1);
 
+        User user = new User("john", "john@test.com", "enc", 1, LocalDate.of(2000, 1, 15));
+        user.setId(1L);
+        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
         when(infoUserRepository.save(any(InfoUser.class))).thenAnswer(inv -> {
             InfoUser u = inv.getArgument(0);
             u.setId(10L);

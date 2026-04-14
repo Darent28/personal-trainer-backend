@@ -6,6 +6,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import java.time.Instant;
+import java.time.LocalDate;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,7 +61,7 @@ class AuthControllerTest {
     @Test
     void login_shouldReturnToken() throws Exception {
         LoginInput input = new LoginInput("john@test.com", "password123");
-        UserResponseDto userDto = new UserResponseDto(1L, "john", "john@test.com", 1, true);
+        UserResponseDto userDto = new UserResponseDto(1L, "john", "john@test.com", 1, LocalDate.of(2000, 1, 15), true);
         AuthResponseDto response = new AuthResponseDto("jwt-token", Instant.now().plusMillis(86400000), userDto);
 
         when(authService.login(any(LoginInput.class))).thenReturn(response);
@@ -85,8 +86,8 @@ class AuthControllerTest {
 
     @Test
     void register_shouldReturn201() throws Exception {
-        UserInput input = new UserInput("john", "john@test.com", "password123", 1);
-        UserResponseDto userDto = new UserResponseDto(1L, "john", "john@test.com", 1, false);
+        UserInput input = new UserInput("john", "john@test.com", "password123", 1, LocalDate.of(2000, 1, 15));
+        UserResponseDto userDto = new UserResponseDto(1L, "john", "john@test.com", 1, LocalDate.of(2000, 1, 15), false);
 
         when(authService.register(any(UserInput.class))).thenReturn(userDto);
 
@@ -100,7 +101,7 @@ class AuthControllerTest {
 
     @Test
     void register_shouldReturn400_whenPasswordTooShort() throws Exception {
-        UserInput input = new UserInput("john", "john@test.com", "short", 1);
+        UserInput input = new UserInput("john", "john@test.com", "short", 1, LocalDate.of(2000, 1, 15));
 
         mockMvc.perform(post("/api/auth/register")
                 .contentType(MediaType.APPLICATION_JSON)

@@ -78,7 +78,7 @@ class InfoControllerTest {
 
     @Test
     void postInfoUser_shouldReturn201() throws Exception {
-        InfoUserInput input = new InfoUserInput(80.0, 180.0, 15.0, 25, 1L, 3, 1);
+        InfoUserInput input = new InfoUserInput(80.0, 180.0, 15.0, 1L, 3, 1);
         InfoUserResponseDto dto = new InfoUserResponseDto(1L, 80.0, 180.0, 15.0, 25, 3, 1, 1L);
         when(infoUserService.postInfoUser(any(InfoUserInput.class))).thenReturn(dto);
 
@@ -91,7 +91,7 @@ class InfoControllerTest {
 
     @Test
     void postInfoUser_shouldReturn400_whenInvalidInput() throws Exception {
-        InfoUserInput input = new InfoUserInput(null, null, null, null, null, null, null);
+        InfoUserInput input = new InfoUserInput(null, null, null, null, null, null);
 
         mockMvc.perform(post("/api/info")
                 .contentType(MediaType.APPLICATION_JSON)

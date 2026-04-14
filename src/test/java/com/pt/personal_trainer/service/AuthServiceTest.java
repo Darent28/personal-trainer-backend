@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
+import java.time.LocalDate;
 import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
@@ -47,7 +48,7 @@ class AuthServiceTest {
     @Test
     void login_shouldReturnToken_whenCredentialsValid() {
         LoginInput input = new LoginInput("john@test.com", "password");
-        User user = new User("john", "john@test.com", "enc", 1);
+        User user = new User("john", "john@test.com", "enc", 1, LocalDate.of(2000, 1, 15));
         user.setId(1L);
         user.setEmailVerified(true);
 
@@ -75,7 +76,7 @@ class AuthServiceTest {
     @Test
     void login_shouldThrow_whenEmailNotVerified() {
         LoginInput input = new LoginInput("john@test.com", "password");
-        User user = new User("john", "john@test.com", "enc", 1);
+        User user = new User("john", "john@test.com", "enc", 1, LocalDate.of(2000, 1, 15));
         user.setId(1L);
         user.setEmailVerified(false);
 
@@ -88,9 +89,9 @@ class AuthServiceTest {
 
     @Test
     void register_shouldCreateUserAndSendEmail() {
-        UserInput input = new UserInput("john", "john@test.com", "password123", 1);
-        UserResponseDto dto = new UserResponseDto(1L, "john", "john@test.com", 1, false);
-        User user = new User("john", "john@test.com", "enc", 1);
+        UserInput input = new UserInput("john", "john@test.com", "password123", 1, LocalDate.of(2000, 1, 15));
+        UserResponseDto dto = new UserResponseDto(1L, "john", "john@test.com", 1, LocalDate.of(2000, 1, 15), false);
+        User user = new User("john", "john@test.com", "enc", 1, LocalDate.of(2000, 1, 15));
         user.setId(1L);
 
         when(userService.postUser(input)).thenReturn(dto);

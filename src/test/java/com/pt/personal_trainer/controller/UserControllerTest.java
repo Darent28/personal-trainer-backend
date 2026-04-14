@@ -6,6 +6,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
@@ -32,7 +33,7 @@ class UserControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final ObjectMapper objectMapper = new ObjectMapper().findAndRegisterModules();
 
     @MockitoBean
     private UserService userService;
@@ -48,7 +49,7 @@ class UserControllerTest {
 
     @Test
     void getUsers_shouldReturnList() throws Exception {
-        UserResponseDto dto = new UserResponseDto(1L, "john", "john@test.com", 1, false);
+        UserResponseDto dto = new UserResponseDto(1L, "john", "john@test.com", 1, LocalDate.of(2000, 1, 15), false);
         when(userService.getUsers()).thenReturn(List.of(dto));
 
         mockMvc.perform(get("/api/users"))
@@ -59,7 +60,7 @@ class UserControllerTest {
 
     @Test
     void getUserById_shouldReturnUser() throws Exception {
-        UserResponseDto dto = new UserResponseDto(1L, "john", "john@test.com", 1, false);
+        UserResponseDto dto = new UserResponseDto(1L, "john", "john@test.com", 1, LocalDate.of(2000, 1, 15), false);
         when(userService.getUserById(1L)).thenReturn(dto);
 
         mockMvc.perform(get("/api/users/1"))
@@ -77,8 +78,8 @@ class UserControllerTest {
 
     @Test
     void putUserById_shouldUpdateUser() throws Exception {
-        UserInput input = new UserInput("newname", "john@test.com", "password123", 1);
-        UserResponseDto dto = new UserResponseDto(1L, "newname", "john@test.com", 1, false);
+        UserInput input = new UserInput("newname", "john@test.com", "password123", 1, LocalDate.of(2000, 1, 15));
+        UserResponseDto dto = new UserResponseDto(1L, "newname", "john@test.com", 1, LocalDate.of(2000, 1, 15), false);
         when(userService.updateUsername(eq(1L), any(UserInput.class))).thenReturn(dto);
 
         mockMvc.perform(put("/api/users/1")
@@ -90,7 +91,7 @@ class UserControllerTest {
 
     @Test
     void deleteUser_shouldSoftDelete() throws Exception {
-        UserResponseDto dto = new UserResponseDto(1L, "john", "john@test.com", 1, false);
+        UserResponseDto dto = new UserResponseDto(1L, "john", "john@test.com", 1, LocalDate.of(2000, 1, 15), false);
         when(userService.deleteUser(1L)).thenReturn(dto);
 
         mockMvc.perform(delete("/api/users/1"))

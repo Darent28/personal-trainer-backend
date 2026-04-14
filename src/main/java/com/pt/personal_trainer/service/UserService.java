@@ -28,7 +28,7 @@ public class UserService {
     @Transactional
     public UserResponseDto postUser(UserInput userInput) {
         try {
-            User user = new User(userInput.getUsername(), userInput.getEmail(), passwordEncoder.encode(userInput.getPassword()), userInput.getGenderId());
+            User user = new User(userInput.getUsername(), userInput.getEmail(), passwordEncoder.encode(userInput.getPassword()), userInput.getGenderId(), userInput.getBirthday());
             userRepository.save(user);
             return UserResponseDto.fromEntity(user);
         } catch (Exception e) {

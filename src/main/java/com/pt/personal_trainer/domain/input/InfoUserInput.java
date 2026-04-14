@@ -27,11 +27,6 @@ public class InfoUserInput {
     @Max(value = 70, message = "Fat percentage must be at most 70")
     private Double fatPercentage;
 
-    @NotNull(message = "Age is required")
-    @Min(value = 10, message = "Age must be at least 10")
-    @Max(value = 100, message = "Age must be at most 100")
-    private Integer age;
-
     @NotNull(message = "User id is required")
     private Long userId;
 
