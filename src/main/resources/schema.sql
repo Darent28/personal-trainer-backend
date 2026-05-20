@@ -43,6 +43,7 @@ CREATE TABLE IF NOT EXISTS users (
     password        VARCHAR(255),
     status          INTEGER,
     gender_id       INTEGER,
+    height          DOUBLE PRECISION,
     email_verified  BOOLEAN DEFAULT FALSE
 );
 
@@ -63,7 +64,6 @@ CREATE INDEX IF NOT EXISTS idx_ect_user_id ON email_confirmation_tokens(user_id)
 CREATE TABLE IF NOT EXISTS users_info (
     id             BIGSERIAL PRIMARY KEY,
     _weight        DOUBLE PRECISION,
-    height         DOUBLE PRECISION,
     fat_porcentage DOUBLE PRECISION,
     age            INTEGER,
     activity_level INTEGER REFERENCES level_activity_type(id),

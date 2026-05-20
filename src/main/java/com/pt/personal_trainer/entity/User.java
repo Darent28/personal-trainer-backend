@@ -40,15 +40,19 @@ public class User implements Serializable {
     @Column(name = "birthday")
     private LocalDate birthday;
 
+    @Column(name = "height")
+    private Double height;
+
     @Column(name = "email_verified")
     private Boolean emailVerified = false;
 
-    public User(String username, String email, String password, Integer genderId, LocalDate birthday) {
+    public User(String username, String email, String password, Integer genderId, LocalDate birthday, Double height) {
         this.username = username;
         this.email = email;
         this.password = password;
         this.genderId = genderId;
         this.birthday = birthday;
+        this.height = height;
         this.status = 1;
         this.emailVerified = false;
     }

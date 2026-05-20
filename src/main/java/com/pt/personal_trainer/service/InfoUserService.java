@@ -73,7 +73,6 @@ public class InfoUserService {
 
             InfoUser infoUser = new InfoUser(
                 input.getWeight(),
-                input.getHeight(),
                 input.getFatPercentage(),
                 age,
                 input.getActivityLevel(),
@@ -82,7 +81,7 @@ public class InfoUserService {
             );
             infoUserRepository.save(infoUser);
 
-            dailyPlansRepository.save(calculateMacros(input, age, infoUser.getId()));
+            dailyPlansRepository.save(calculateMacros(input, age, infoUser.getId(), user));
 
             return InfoUserResponseDto.fromEntity(infoUser);
         } catch (NotFoundException | ProcessServiceException e) {
@@ -100,12 +99,14 @@ public class InfoUserService {
      * The adjustment factor (0.0–1.0) is derived from body-fat percentage (clamped at 30%).
      * Calories use t² for a progressive curve: conservative at low fat%, ramps up at high fat%.
      */
-    private DailyPlans calculateMacros(InfoUserInput input, int age, Long userInfoId) {
+    private DailyPlans calculateMacros(InfoUserInput input, int age, Long userInfoId, User user) {
         // --- BMR (Harris-Benedict) ---
-        int genderIdUser = userRepository.findGenderIdById(input.getUserId())
-            .orElseThrow(() -> new NotFoundException("User not found with id: " + input.getUserId()));
+        int genderIdUser = user.getGenderId();
 
-        double base = 10 * input.getWeight() + 6.25 * input.getHeight() - 5 * age;
+        if (user.getHeight() == null) {
+            throw new ProcessServiceException("User height is not set.");
+        }
+        double base = 10 * input.getWeight() + 6.25 * user.getHeight() - 5 * age;
         int bmr = switch (genderIdUser) {
             case 1 -> (int) (base + 5);
             case 2 -> (int) (base - 161);
@@ -125,7 +126,7 @@ public class InfoUserService {
 
         // t: 0.0 (lean) → 1.0 (high fat%), clamped. Reference: 30% body fat = upper bound.
         // Default fat%: 15% for males, 25% for females (typical mid-range values)
-        double defaultFat = (genderIdUser == 1) ? 15.0 : 25.0;
+        double defaultFat = (genderIdUser == 1) ? 20.0 : 30.0;
         double fatPercentage = (input.getFatPercentage() != null && input.getFatPercentage() != 0) ? input.getFatPercentage() : defaultFat;
         double t = Math.max(0.0, Math.min(1.0, fatPercentage / 30.0));
 

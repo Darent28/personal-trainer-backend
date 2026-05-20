@@ -24,9 +24,6 @@ public class InfoUser implements Serializable {
     @Column(name = "_weight")
     private Double weight;
 
-    @Column(name = "height")
-    private Double height;
-
     @Column(name = "fat_percentage")
     private Double fatPercentage;
 
@@ -42,9 +39,8 @@ public class InfoUser implements Serializable {
     @Column(name = "user_id")
     private Long userId;
 
-    public InfoUser(Double weight, Double height, Double fatPercentage, Integer age, Integer activityLevel, Integer goal, Long userId) {
+    public InfoUser(Double weight, Double fatPercentage, Integer age, Integer activityLevel, Integer goal, Long userId) {
         this.weight = weight;
-        this.height = height;
         this.fatPercentage = fatPercentage;
         this.age = age;
         this.activityLevel = activityLevel;

@@ -49,7 +49,7 @@ class UserControllerTest {
 
     @Test
     void getUsers_shouldReturnList() throws Exception {
-        UserResponseDto dto = new UserResponseDto(1L, "john", "john@test.com", 1, LocalDate.of(2000, 1, 15), false);
+        UserResponseDto dto = new UserResponseDto(1L, "john", "john@test.com", 1, LocalDate.of(2000, 1, 15), null, false);
         when(userService.getUsers()).thenReturn(List.of(dto));
 
         mockMvc.perform(get("/api/users"))
@@ -60,7 +60,7 @@ class UserControllerTest {
 
     @Test
     void getUserById_shouldReturnUser() throws Exception {
-        UserResponseDto dto = new UserResponseDto(1L, "john", "john@test.com", 1, LocalDate.of(2000, 1, 15), false);
+        UserResponseDto dto = new UserResponseDto(1L, "john", "john@test.com", 1, LocalDate.of(2000, 1, 15), null, false);
         when(userService.getUserById(1L)).thenReturn(dto);
 
         mockMvc.perform(get("/api/users/1"))
@@ -78,8 +78,8 @@ class UserControllerTest {
 
     @Test
     void putUserById_shouldUpdateUser() throws Exception {
-        UserInput input = new UserInput("newname", "john@test.com", "password123", 1, LocalDate.of(2000, 1, 15));
-        UserResponseDto dto = new UserResponseDto(1L, "newname", "john@test.com", 1, LocalDate.of(2000, 1, 15), false);
+        UserInput input = new UserInput("newname", "john@test.com", "password123", 1, LocalDate.of(2000, 1, 15), 175.0);
+        UserResponseDto dto = new UserResponseDto(1L, "newname", "john@test.com", 1, LocalDate.of(2000, 1, 15), null, false);
         when(userService.updateUsername(eq(1L), any(UserInput.class))).thenReturn(dto);
 
         mockMvc.perform(put("/api/users/1")
@@ -91,7 +91,7 @@ class UserControllerTest {
 
     @Test
     void deleteUser_shouldSoftDelete() throws Exception {
-        UserResponseDto dto = new UserResponseDto(1L, "john", "john@test.com", 1, LocalDate.of(2000, 1, 15), false);
+        UserResponseDto dto = new UserResponseDto(1L, "john", "john@test.com", 1, LocalDate.of(2000, 1, 15), null, false);
         when(userService.deleteUser(1L)).thenReturn(dto);
 
         mockMvc.perform(delete("/api/users/1"))

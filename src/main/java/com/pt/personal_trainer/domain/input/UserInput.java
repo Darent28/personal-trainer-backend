@@ -6,6 +6,7 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Past;
+import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -37,4 +38,8 @@ public class UserInput {
     @NotNull(message = "Birthday is required")
     @Past(message = "Birthday must be a past date")
     private LocalDate birthday;
+
+    @NotNull(message = "Height is required")
+    @Positive(message = "Height must be a positive number")
+    private Double height;
 }

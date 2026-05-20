@@ -10,6 +10,7 @@ public record UserResponseDto(
     String email,
     Integer genderId,
     LocalDate birthday,
+    Double height,
     Boolean emailVerified
 ) {
 
@@ -20,6 +21,7 @@ public record UserResponseDto(
             user.getEmail(),
             user.getGenderId(),
             user.getBirthday(),
+            user.getHeight(),
             user.getEmailVerified()
         );
     }

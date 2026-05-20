@@ -5,7 +5,6 @@ import com.pt.personal_trainer.entity.InfoUser;
 public record InfoUserResponseDto(
     Long id,
     Double weight,
-    Double height,
     Double fatPercentage,
     Integer age,
     Integer activityLevel,
@@ -17,7 +16,6 @@ public record InfoUserResponseDto(
         return new InfoUserResponseDto(
             infoUser.getId(),
             infoUser.getWeight(),
-            infoUser.getHeight(),
             infoUser.getFatPercentage(),
             infoUser.getAge(),
             infoUser.getActivityLevel(),

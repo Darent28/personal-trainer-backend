@@ -36,7 +36,7 @@ class UserServiceTest {
 
     @Test
     void postUser_shouldCreateAndReturnUser() {
-        UserInput input = new UserInput("john", "john@test.com", "password123", 1, LocalDate.of(2000, 1, 15));
+        UserInput input = new UserInput("john", "john@test.com", "password123", 1, LocalDate.of(2000, 1, 15), null);
         when(passwordEncoder.encode("password123")).thenReturn("encoded");
         when(userRepository.save(any(User.class))).thenAnswer(invocation -> {
             User u = invocation.getArgument(0);
@@ -54,9 +54,9 @@ class UserServiceTest {
 
     @Test
     void getUsers_shouldReturnAllUsers() {
-        User user1 = new User("john", "john@test.com", "enc", 1, LocalDate.of(2000, 1, 15));
+        User user1 = new User("john", "john@test.com", "enc", 1, LocalDate.of(2000, 1, 15), null);
         user1.setId(1L);
-        User user2 = new User("jane", "jane@test.com", "enc", 2, LocalDate.of(1995, 6, 20));
+        User user2 = new User("jane", "jane@test.com", "enc", 2, LocalDate.of(1995, 6, 20), null);
         user2.setId(2L);
         when(userRepository.findAll()).thenReturn(List.of(user1, user2));
 
@@ -69,7 +69,7 @@ class UserServiceTest {
 
     @Test
     void getUserById_shouldReturnUser_whenExists() {
-        User user = new User("john", "john@test.com", "enc", 1, LocalDate.of(2000, 1, 15));
+        User user = new User("john", "john@test.com", "enc", 1, LocalDate.of(2000, 1, 15), null);
         user.setId(1L);
         when(userRepository.findById(1L)).thenReturn(Optional.of(user));
 
@@ -90,13 +90,13 @@ class UserServiceTest {
 
     @Test
     void updateUsername_shouldUpdateAndReturn() {
-        User user = new User("john", "john@test.com", "enc", 1, LocalDate.of(2000, 1, 15));
+        User user = new User("john", "john@test.com", "enc", 1, LocalDate.of(2000, 1, 15), null);
         user.setId(1L);
-        User updated = new User("newname", "john@test.com", "enc", 1, LocalDate.of(2000, 1, 15));
+        User updated = new User("newname", "john@test.com", "enc", 1, LocalDate.of(2000, 1, 15), null);
         updated.setId(1L);
         when(userRepository.findById(1L)).thenReturn(Optional.of(user), Optional.of(updated));
 
-        UserInput input = new UserInput("newname", null, null, null, null);
+        UserInput input = new UserInput("newname", null, null, null, null, null);
         UserResponseDto result = userService.updateUsername(1L, input);
 
         assertThat(result.username()).isEqualTo("newname");
@@ -105,10 +105,10 @@ class UserServiceTest {
 
     @Test
     void deleteUser_shouldSoftDelete() {
-        User user = new User("john", "john@test.com", "enc", 1, LocalDate.of(2000, 1, 15));
+        User user = new User("john", "john@test.com", "enc", 1, LocalDate.of(2000, 1, 15), null);
         user.setId(1L);
         user.setStatus(1);
-        User deleted = new User("john", "john@test.com", "enc", 1, LocalDate.of(2000, 1, 15));
+        User deleted = new User("john", "john@test.com", "enc", 1, LocalDate.of(2000, 1, 15), null);
         deleted.setId(1L);
         deleted.setStatus(0);
         when(userRepository.findById(1L)).thenReturn(Optional.of(user), Optional.of(deleted));

@@ -68,7 +68,7 @@ class InfoUserServiceTest {
 
     @Test
     void getInfoUsersByUserId_shouldReturnList() {
-        InfoUser info = new InfoUser(80.0, 180.0, 15.0, 25, 3, 1, 1L);
+        InfoUser info = new InfoUser(80.0, 15.0, 25, 3, 1, 1L);
         info.setId(1L);
         when(infoUserRepository.findByUserId(1L)).thenReturn(List.of(info));
 
@@ -80,14 +80,13 @@ class InfoUserServiceTest {
 
     @Test
     void getInfoUserById_shouldReturnInfo() {
-        InfoUser info = new InfoUser(80.0, 180.0, 15.0, 25, 3, 1, 1L);
+        InfoUser info = new InfoUser(80.0, 15.0, 25, 3, 1, 1L);
         info.setId(1L);
         when(infoUserRepository.findById(1L)).thenReturn(Optional.of(info));
 
         InfoUserResponseDto result = infoUserService.getInfoUserById(1L);
 
         assertThat(result.weight()).isEqualTo(80.0);
-        assertThat(result.height()).isEqualTo(180.0);
     }
 
     @Test
@@ -100,9 +99,9 @@ class InfoUserServiceTest {
 
     @Test
     void postInfoUser_shouldCalculateMacrosAndSave() {
-        InfoUserInput input = new InfoUserInput(80.0, 180.0, 15.0, 1L, 3, 1);
+        InfoUserInput input = new InfoUserInput(80.0, 15.0, 1L, 3, 1);
 
-        User user = new User("john", "john@test.com", "enc", 1, LocalDate.of(2000, 1, 15));
+        User user = new User("john", "john@test.com", "enc", 1, LocalDate.of(2000, 1, 15), 180.0);
         user.setId(1L);
         when(userRepository.findById(1L)).thenReturn(Optional.of(user));
         when(infoUserRepository.save(any(InfoUser.class))).thenAnswer(inv -> {
@@ -110,7 +109,6 @@ class InfoUserServiceTest {
             u.setId(10L);
             return u;
         });
-        when(userRepository.findGenderIdById(1L)).thenReturn(Optional.of(1));
         when(levelActivityTypeRepository.findFactorById(3)).thenReturn(1.55);
         GoalMacroConfig config = new GoalMacroConfig(1, 1, -500, -200, 2.0, 2.5, 0.8, 1.2);
         when(goalMacroConfigRepository.findByGoalTypeId(1)).thenReturn(Optional.of(config));
@@ -124,7 +122,7 @@ class InfoUserServiceTest {
 
     @Test
     void postInfoUser_shouldThrow_whenUserNotFound() {
-        InfoUserInput input = new InfoUserInput(80.0, 180.0, 15.0, 99L, 3, 1);
+        InfoUserInput input = new InfoUserInput(80.0, 15.0, 99L, 3, 1);
 
         when(userRepository.findById(99L)).thenReturn(Optional.empty());
 
@@ -134,9 +132,9 @@ class InfoUserServiceTest {
 
     @Test
     void postInfoUser_shouldThrow_whenActivityLevelNotFound() {
-        InfoUserInput input = new InfoUserInput(80.0, 180.0, 15.0, 1L, 99, 1);
+        InfoUserInput input = new InfoUserInput(80.0, 15.0, 1L, 99, 1);
 
-        User user = new User("john", "john@test.com", "enc", 1, LocalDate.of(2000, 1, 15));
+        User user = new User("john", "john@test.com", "enc", 1, LocalDate.of(2000, 1, 15), 180.0);
         user.setId(1L);
         when(userRepository.findById(1L)).thenReturn(Optional.of(user));
         when(infoUserRepository.save(any(InfoUser.class))).thenAnswer(inv -> {
@@ -144,7 +142,6 @@ class InfoUserServiceTest {
             u.setId(10L);
             return u;
         });
-        when(userRepository.findGenderIdById(1L)).thenReturn(Optional.of(1));
         when(levelActivityTypeRepository.findFactorById(99)).thenReturn(null);
 
         assertThatThrownBy(() -> infoUserService.postInfoUser(input))

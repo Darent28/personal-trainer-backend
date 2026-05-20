@@ -48,18 +48,17 @@ class InfoControllerTest {
 
     @Test
     void getInfoUsersByUserId_shouldReturnList() throws Exception {
-        InfoUserResponseDto dto = new InfoUserResponseDto(1L, 80.0, 180.0, 15.0, 25, 3, 1, 1L);
+        InfoUserResponseDto dto = new InfoUserResponseDto(1L, 80.0, 15.0, 25, 3, 1, 1L);
         when(infoUserService.getInfoUsersByUserId(1L)).thenReturn(List.of(dto));
 
         mockMvc.perform(get("/api/info/user/1"))
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$[0].weight").value(80.0))
-            .andExpect(jsonPath("$[0].height").value(180.0));
+            .andExpect(jsonPath("$[0].weight").value(80.0));
     }
 
     @Test
     void getInfoUserById_shouldReturnInfo() throws Exception {
-        InfoUserResponseDto dto = new InfoUserResponseDto(1L, 80.0, 180.0, 15.0, 25, 3, 1, 1L);
+        InfoUserResponseDto dto = new InfoUserResponseDto(1L, 80.0, 15.0, 25, 3, 1, 1L);
         when(infoUserService.getInfoUserById(1L)).thenReturn(dto);
 
         mockMvc.perform(get("/api/info/1"))
@@ -78,8 +77,8 @@ class InfoControllerTest {
 
     @Test
     void postInfoUser_shouldReturn201() throws Exception {
-        InfoUserInput input = new InfoUserInput(80.0, 180.0, 15.0, 1L, 3, 1);
-        InfoUserResponseDto dto = new InfoUserResponseDto(1L, 80.0, 180.0, 15.0, 25, 3, 1, 1L);
+        InfoUserInput input = new InfoUserInput(80.0, 15.0, 1L, 3, 1);
+        InfoUserResponseDto dto = new InfoUserResponseDto(1L, 80.0, 15.0, 25, 3, 1, 1L);
         when(infoUserService.postInfoUser(any(InfoUserInput.class))).thenReturn(dto);
 
         mockMvc.perform(post("/api/info")
@@ -91,7 +90,7 @@ class InfoControllerTest {
 
     @Test
     void postInfoUser_shouldReturn400_whenInvalidInput() throws Exception {
-        InfoUserInput input = new InfoUserInput(null, null, null, null, null, null);
+        InfoUserInput input = new InfoUserInput(null, null, null, null, null);
 
         mockMvc.perform(post("/api/info")
                 .contentType(MediaType.APPLICATION_JSON)
