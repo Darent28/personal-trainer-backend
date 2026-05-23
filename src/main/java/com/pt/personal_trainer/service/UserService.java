@@ -8,6 +8,7 @@ import com.pt.personal_trainer.entity.User;
 import com.pt.personal_trainer.repository.UserRepository;
 import com.pt.personal_trainer.domain.dto.UserResponseDto;
 import com.pt.personal_trainer.domain.input.UserInput;
+import com.pt.personal_trainer.domain.input.UserUpdateInput;
 import com.pt.personal_trainer.exception.CustomExceptions.NotFoundException;
 import com.pt.personal_trainer.exception.CustomExceptions.ProcessServiceException;
 import com.pt.personal_trainer.exception.CustomExceptions.ServerErrorException;
@@ -55,11 +56,11 @@ public class UserService {
     }
 
     @Transactional
-    public UserResponseDto updateUsername(Long id, UserInput userInput) {
+    public UserResponseDto updateProfile(Long id, UserUpdateInput input) {
         userRepository.findById(id)
             .orElseThrow(() -> new NotFoundException("User not found with id: " + id));
         try {
-            userRepository.updateUsernameById(id, userInput.getUsername());
+            userRepository.updateProfileById(id, input.getUsername(), input.getHeight());
             return UserResponseDto.fromEntity(userRepository.findById(id).get());
         } catch (Exception e) {
             log.error("Failed to update user id={}", id, e);

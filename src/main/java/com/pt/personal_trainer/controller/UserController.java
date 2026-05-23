@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.pt.personal_trainer.domain.dto.UserResponseDto;
-import com.pt.personal_trainer.domain.input.UserInput;
+import com.pt.personal_trainer.domain.input.UserUpdateInput;
 import com.pt.personal_trainer.service.UserService;
 
 import jakarta.validation.Valid;
@@ -35,8 +35,8 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
-    public UserResponseDto putUserById(@PathVariable Long id, @Valid @RequestBody UserInput userInput) {
-        return userService.updateUsername(id, userInput);
+    public UserResponseDto putUserById(@PathVariable Long id, @Valid @RequestBody UserUpdateInput userUpdateInput) {
+        return userService.updateProfile(id, userUpdateInput);
     }
 
     @DeleteMapping("/{id}")
