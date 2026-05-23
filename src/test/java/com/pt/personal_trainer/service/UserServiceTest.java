@@ -18,6 +18,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.pt.personal_trainer.domain.dto.UserResponseDto;
 import com.pt.personal_trainer.domain.input.UserInput;
+import com.pt.personal_trainer.domain.input.UserUpdateInput;
 import com.pt.personal_trainer.entity.User;
 import com.pt.personal_trainer.exception.CustomExceptions.NotFoundException;
 import com.pt.personal_trainer.repository.UserRepository;
@@ -89,18 +90,19 @@ class UserServiceTest {
     }
 
     @Test
-    void updateUsername_shouldUpdateAndReturn() {
+    void updateProfile_shouldUpdateAndReturn() {
         User user = new User("john", "john@test.com", "enc", 1, LocalDate.of(2000, 1, 15), null);
         user.setId(1L);
         User updated = new User("newname", "john@test.com", "enc", 1, LocalDate.of(2000, 1, 15), null);
         updated.setId(1L);
+        updated.setHeight(175.0);
         when(userRepository.findById(1L)).thenReturn(Optional.of(user), Optional.of(updated));
 
-        UserInput input = new UserInput("newname", null, null, null, null, null);
-        UserResponseDto result = userService.updateUsername(1L, input);
+        UserUpdateInput input = new UserUpdateInput("newname", 175.0);
+        UserResponseDto result = userService.updateProfile(1L, input);
 
         assertThat(result.username()).isEqualTo("newname");
-        verify(userRepository).updateUsernameById(1L, "newname");
+        verify(userRepository).updateProfileById(1L, "newname", 175.0);
     }
 
     @Test

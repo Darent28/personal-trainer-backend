@@ -23,6 +23,7 @@ import com.pt.personal_trainer.auth.JwtUtil;
 import com.pt.personal_trainer.auth.UserDetailsServiceImpl;
 import com.pt.personal_trainer.domain.dto.UserResponseDto;
 import com.pt.personal_trainer.domain.input.UserInput;
+import com.pt.personal_trainer.domain.input.UserUpdateInput;
 import com.pt.personal_trainer.exception.CustomExceptions.NotFoundException;
 import com.pt.personal_trainer.service.UserService;
 
@@ -78,9 +79,9 @@ class UserControllerTest {
 
     @Test
     void putUserById_shouldUpdateUser() throws Exception {
-        UserInput input = new UserInput("newname", "john@test.com", "password123", 1, LocalDate.of(2000, 1, 15), 175.0);
+        UserUpdateInput input = new UserUpdateInput("newname", 175.0);
         UserResponseDto dto = new UserResponseDto(1L, "newname", "john@test.com", 1, LocalDate.of(2000, 1, 15), null, false);
-        when(userService.updateUsername(eq(1L), any(UserInput.class))).thenReturn(dto);
+        when(userService.updateProfile(eq(1L), any(UserUpdateInput.class))).thenReturn(dto);
 
         mockMvc.perform(put("/api/users/1")
                 .contentType(MediaType.APPLICATION_JSON)
