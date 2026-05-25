@@ -81,3 +81,22 @@ CREATE TABLE IF NOT EXISTS daily_plans (
     total_carbs     INTEGER,
     user_info_id    BIGINT NOT NULL REFERENCES users_info(id)
 );
+
+-- Plicometry checks — one row per measurement session
+CREATE TABLE IF NOT EXISTS plicometry_check (
+    id               BIGSERIAL PRIMARY KEY,
+    user_id          BIGINT NOT NULL REFERENCES users(id),
+    method           SMALLINT NOT NULL,
+    fat_percentage   DOUBLE PRECISION NOT NULL,
+    site_chest       DOUBLE PRECISION,
+    site_midaxillary DOUBLE PRECISION,
+    site_triceps     DOUBLE PRECISION,
+    site_subscapular DOUBLE PRECISION,
+    site_abdomen     DOUBLE PRECISION,
+    site_suprailiac  DOUBLE PRECISION,
+    site_thigh       DOUBLE PRECISION,
+    site_iliac_crest DOUBLE PRECISION,
+    created_at       TIMESTAMP DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_plicometry_user_id ON plicometry_check(user_id);
