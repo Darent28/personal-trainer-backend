@@ -100,3 +100,28 @@ CREATE TABLE IF NOT EXISTS plicometry_check (
 );
 
 CREATE INDEX IF NOT EXISTS idx_plicometry_user_id ON plicometry_check(user_id);
+
+-- Favorite foods saved by users (data denormalized from USDA FoodData Central)
+CREATE TABLE IF NOT EXISTS favorite_foods (
+    id            BIGSERIAL PRIMARY KEY,
+    user_id       BIGINT NOT NULL REFERENCES users(id),
+    fdc_id        INTEGER NOT NULL,
+    name          VARCHAR(500) NOT NULL,
+    brand         VARCHAR(255),
+    data_type     VARCHAR(100),
+    calories      DOUBLE PRECISION,
+    protein_g     DOUBLE PRECISION,
+    fat_g         DOUBLE PRECISION,
+    fiber_g       DOUBLE PRECISION,
+    vitamin_a_ug  DOUBLE PRECISION,
+    vitamin_c_mg  DOUBLE PRECISION,
+    vitamin_d_ug  DOUBLE PRECISION,
+    vitamin_e_mg  DOUBLE PRECISION,
+    vitamin_k_ug  DOUBLE PRECISION,
+    vitamin_b6_mg DOUBLE PRECISION,
+    vitamin_b12_ug DOUBLE PRECISION,
+    created_at    TIMESTAMP DEFAULT NOW(),
+    UNIQUE (user_id, fdc_id)
+);
+
+CREATE INDEX IF NOT EXISTS idx_favorite_foods_user_id ON favorite_foods(user_id);
