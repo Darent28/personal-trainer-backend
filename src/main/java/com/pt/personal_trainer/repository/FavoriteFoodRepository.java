@@ -11,4 +11,6 @@ public interface FavoriteFoodRepository extends JpaRepository<FavoriteFood, Long
     List<FavoriteFood> findByUserIdOrderByCreatedAtDesc(Long userId);
 
     boolean existsByUserIdAndFdcId(Long userId, Integer fdcId);
+
+    void deleteByUserIdAndFdcId(Long userId, Integer fdcId);
 }

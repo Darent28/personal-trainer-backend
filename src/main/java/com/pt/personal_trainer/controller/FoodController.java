@@ -3,6 +3,7 @@ package com.pt.personal_trainer.controller;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -52,6 +53,12 @@ public class FoodController {
             @Valid @RequestBody FavoriteFoodInput input) {
 
         return favoriteFoodService.addFavorite(userId, input);
+    }
+
+    @DeleteMapping("/favorites/{userId}/{fdcId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void removeFavorite(@PathVariable Long userId, @PathVariable Integer fdcId) {
+        favoriteFoodService.removeFavorite(userId, fdcId);
     }
 
     @GetMapping("/favorites/{userId}")

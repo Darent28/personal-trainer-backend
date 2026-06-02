@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import com.pt.personal_trainer.domain.dto.FavoriteFoodDto;
 import com.pt.personal_trainer.domain.input.FavoriteFoodInput;
 import com.pt.personal_trainer.entity.FavoriteFood;
+import com.pt.personal_trainer.exception.CustomExceptions.NotFoundException;
 import com.pt.personal_trainer.exception.CustomExceptions.ProcessServiceException;
 import com.pt.personal_trainer.exception.CustomExceptions.ServerErrorException;
 import com.pt.personal_trainer.repository.FavoriteFoodRepository;
@@ -54,6 +55,19 @@ public class FavoriteFoodService {
         } catch (Exception e) {
             log.error("Failed to save favorite food for userId={}", userId, e);
             throw new ServerErrorException("Failed to save favorite food.");
+        }
+    }
+
+    @Transactional
+    public void removeFavorite(Long userId, Integer fdcId) {
+        if (!favoriteFoodRepository.existsByUserIdAndFdcId(userId, fdcId)) {
+            throw new NotFoundException("Favorite food not found.");
+        }
+        try {
+            favoriteFoodRepository.deleteByUserIdAndFdcId(userId, fdcId);
+        } catch (Exception e) {
+            log.error("Failed to remove favorite food fdcId={} for userId={}", fdcId, userId, e);
+            throw new ServerErrorException("Failed to remove favorite food.");
         }
     }
 
