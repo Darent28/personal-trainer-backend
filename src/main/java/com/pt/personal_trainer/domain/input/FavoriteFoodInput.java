@@ -19,6 +19,7 @@ public class FavoriteFoodInput {
     private String dataType;
     private Double calories;
     private Double proteinG;
+    private Double carbsG;
     private Double fatG;
     private Double fiberG;
     private VitaminsInput vitamins;

@@ -11,6 +11,7 @@ public record FoodSearchResultDto(
         String dataType,
         Double calories,
         Double proteinG,
+        Double carbsG,
         Double fatG,
         Double fiberG,
         Vitamins vitamins
@@ -50,6 +51,7 @@ public record FoodSearchResultDto(
                 item.dataType(),
                 nutrients.get(1008),
                 nutrients.get(1003),
+                nutrients.get(1005),
                 nutrients.get(1004),
                 nutrients.get(1079),
                 vitamins

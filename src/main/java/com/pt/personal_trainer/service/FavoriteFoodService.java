@@ -37,6 +37,7 @@ public class FavoriteFoodService {
         entity.setDataType(input.getDataType());
         entity.setCalories(input.getCalories());
         entity.setProteinG(input.getProteinG());
+        entity.setCarbsG(input.getCarbsG());
         entity.setFatG(input.getFatG());
         entity.setFiberG(input.getFiberG());
 

@@ -48,6 +48,9 @@ public class FavoriteFood implements Serializable {
     @Column(name = "protein_g")
     private Double proteinG;
 
+    @Column(name = "carbs_g")
+    private Double carbsG;
+
     @Column(name = "fat_g")
     private Double fatG;
 

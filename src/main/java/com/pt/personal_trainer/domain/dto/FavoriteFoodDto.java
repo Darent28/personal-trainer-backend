@@ -12,6 +12,7 @@ public record FavoriteFoodDto(
         String dataType,
         Double calories,
         Double proteinG,
+        Double carbsG,
         Double fatG,
         Double fiberG,
         Vitamins vitamins,
@@ -37,6 +38,7 @@ public record FavoriteFoodDto(
                 entity.getDataType(),
                 entity.getCalories(),
                 entity.getProteinG(),
+                entity.getCarbsG(),
                 entity.getFatG(),
                 entity.getFiberG(),
                 new Vitamins(
